@@ -5,6 +5,93 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Form</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
-  <body></body>
+  <body>
+    <form method="post" class="form">
+      <div class="container">
+        <label for="username">Username:</label>
+        <input
+          type="text"
+          placeholder="Enter your username"
+          name="username"
+          id="username"
+        />
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" />
+        <label for="city">City of employment:</label>
+        <input
+          id="city"
+          type="text"
+          placeholder="Bangalore, Surat etc"
+          name="city"
+        />
+        <label for="webServer">Web server:</label>
+
+        <select id="webServer" name="webServer">
+          <option selected>Choose a server</option>
+          <option value="Apache HTTP Server">Apache HTTP Server</option>
+          <option value="Internet Information Services">
+            Internet Information Services
+          </option>
+          <option value="lighttpd Serverlighttpd">
+            lighttpd Serverlighttpd
+          </option>
+          <option value="Sun Java System Web ServerSun Java System Web Server">
+            Sun Java System Web ServerSun Java System Web Server
+          </option>
+          <option value="Jigsaw Server">Jigsaw Server</option>
+        </select>
+        <span>Please specify your role:</span>
+        <span class="rows">
+          <span>
+            <input type="radio" id="admin" name="role" value="admin" />
+            <label for="admin">Admin</label>
+          </span>
+
+          <span>
+            <input type="radio" id="engineer" name="role" value="part-time" />
+            <label for="engineer">Engineer</label>
+          </span>
+          <span>
+            <input type="radio" id="manager" name="role" value="manager" />
+            <label for="manager">Manager</label>
+          </span>
+
+          <span>
+            <input type="radio" id="guest" name="role" value="guest" />
+            <label for="guest">Guest</label>
+          </span>
+        </span>
+        <span>Single Sign-on to the following:</span>
+        <span class="rows">
+          <span>
+            <input type="checkbox" id="mail" name="mail" value="mail" />
+            <label for="mail">Mail</label>
+          </span>
+          <span>
+            <input
+              type="checkbox"
+              id="payroll"
+              name="payroll"
+              value="payroll"
+            />
+            <label for="mail">Payroll</label>
+          </span>
+          <span>
+            <input
+              type="checkbox"
+              id="selfService"
+              name="selfService"
+              value="selfService"
+            />
+            <label for="mail">Self-service</label>
+          </span>
+        </span>
+      </div>
+      <button type="submit">Submit</button>
+      <button type="reset">Reset</button>
+    </form>
+    <script type="text/javascript" src="index.js"></script>
+  </body>
 </html>

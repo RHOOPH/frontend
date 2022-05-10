@@ -1,0 +1,16 @@
+.form {
+  max-width: max-content;
+  text-align: center;
+}
+.container {
+  display: grid;
+  grid-template-columns: minmax(min-content, max-content) 1fr;
+  gap: 2rem;
+  text-align: initial;
+  padding: 2rem;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
