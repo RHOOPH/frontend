@@ -32,4 +32,4 @@ list.forEach((v, i) => {
   v.append(img[i], span[i])
   v.style.marginBottom = "1rem"
 })
-el.append(list[0], list[1], list[2])
+el.append(...list)
