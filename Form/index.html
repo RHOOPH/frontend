@@ -11,14 +11,26 @@
     <form method="post" class="form">
       <div class="container">
         <label for="username">Username:</label>
-        <input
-          type="text"
-          placeholder="Enter your username"
-          name="username"
-          id="username"
-        />
+        <div class="rows">
+          <input
+            type="text"
+            placeholder="Enter your username"
+            name="username"
+            id="username"
+            onchange="validateUserName(this)"
+          />
+          <span id="validationUserName" class="validationMsg"></span>
+        </div>
         <label for="password">Password:</label>
-        <input type="password" name="password" id="password" />
+        <div class="rows">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            onchange="validatePassword(this)"
+          />
+          <span id="validationPassword" class="validationMsg"></span>
+        </div>
         <label for="city">City of employment:</label>
         <input
           id="city"

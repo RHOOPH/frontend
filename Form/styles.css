@@ -14,3 +14,8 @@
   display: flex;
   flex-direction: column;
 }
+
+.validationMsg {
+  font-size: 0.8rem;
+  color: firebrick;
+}
