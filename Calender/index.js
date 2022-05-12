@@ -19,18 +19,31 @@ const createElements = (type, count) => {
 
 const totalDays = getDaysInCurrentMonth()
 const startingDay = getStartingDayInCurrentMonth()
-const emptyDays = createElements("span", startingDay)
+const emptyStartDays = createElements("span", startingDay)
 const days = createElements("span", totalDays)
 const weekdays = createElements("span", 7)
+const emptyEndDays = createElements(
+  "span",
+  (7 - ((totalDays + startingDay) % 7)) % 7
+)
 
 days.forEach((v, i) => {
   v.innerHTML = i + 1
+  v.className = "item days"
 })
 
 weekdays.forEach((v, i) => {
   v.innerHTML = weeks[i]
+  v.className = "item weekdays"
+})
+
+emptyStartDays.forEach((v, i) => {
+  v.className = "item empty"
+})
+emptyEndDays.forEach((v, i) => {
+  v.className = "item empty"
 })
 
 const calender = document.getElementById("calender")
 
-calender.append(...weekdays, ...emptyDays, ...days)
+calender.append(...weekdays, ...emptyStartDays, ...days, ...emptyEndDays)

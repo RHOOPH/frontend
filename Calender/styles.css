@@ -1,4 +1,16 @@
 .grid {
   display: inline-grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-gap: 1px;
+  background-color: black;
+  border: 1px solid black;
+}
+.item {
+  text-align: center;
+  padding: 0.5rem;
+  background-color: gainsboro;
+}
+
+.item:nth-child(7n + 1) {
+  color: red;
 }
