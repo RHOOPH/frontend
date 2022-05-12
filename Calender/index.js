@@ -1,49 +1,37 @@
-const weeks = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+const createCalendar = (date) => {
+  const calendar = document.createElement("div")
+  calendar.className = "calendarGrid"
 
-const getDaysInCurrentMonth = () => {
-  const date = new Date()
+  const getNumberOfDaysInMonth = (date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
 
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-}
-const getStartingDayInCurrentMonth = () => {
-  const date = new Date()
-  return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-}
-const createElements = (type, count) => {
-  let arr = []
-  for (let i = 0; i < count; i++) {
-    arr.push(document.createElement(type))
+  const getStartingDayInMonth = (date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay()
+
+  const createItem = (innerHTML) => {
+    const item = document.createElement("span")
+    item.innerHTML = innerHTML
+    item.className = "item"
+
+    calendar.appendChild(item)
   }
-  return arr
+
+  const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+
+  const numberOfDays = getNumberOfDaysInMonth(date)
+  const startingDayIndex = getStartingDayInMonth(date)
+
+  const calendarEntries = [
+    ...days,
+    ...new Array(startingDayIndex).fill(""), // empty string for starting blank spaces
+    ...new Array(numberOfDays).fill(null).map((_, i) => i + 1), //1 to numberOfDays
+    ...new Array((7 - ((numberOfDays + startingDayIndex) % 7)) % 7).fill(""), // empty string for ending blank spaces
+  ]
+
+  calendarEntries.forEach(createItem)
+
+  return calendar
 }
-
-const totalDays = getDaysInCurrentMonth()
-const startingDay = getStartingDayInCurrentMonth()
-const emptyStartDays = createElements("span", startingDay)
-const days = createElements("span", totalDays)
-const weekdays = createElements("span", 7)
-const emptyEndDays = createElements(
-  "span",
-  (7 - ((totalDays + startingDay) % 7)) % 7
-)
-
-days.forEach((v, i) => {
-  v.innerHTML = i + 1
-  v.className = "item days"
-})
-
-weekdays.forEach((v, i) => {
-  v.innerHTML = weeks[i]
-  v.className = "item weekdays"
-})
-
-emptyStartDays.forEach((v, i) => {
-  v.className = "item empty"
-})
-emptyEndDays.forEach((v, i) => {
-  v.className = "item empty"
-})
-
-const calender = document.getElementById("calender")
-
-calender.append(...weekdays, ...emptyStartDays, ...days, ...emptyEndDays)
+//pass in desired date object to get corresponding calender
+const calendar = createCalendar(new Date(2022, 0))
+document.getElementById("calendar").appendChild(calendar)

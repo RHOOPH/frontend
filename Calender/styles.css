@@ -1,14 +1,14 @@
-.grid {
+.calendarGrid {
   display: inline-grid;
   grid-template-columns: repeat(7, 1fr);
   grid-gap: 1px;
-  background-color: black;
-  border: 1px solid black;
+  background-color: gainsboro;
+  border: 1px solid gainsboro;
 }
 .item {
   text-align: center;
   padding: 0.5rem;
-  background-color: gainsboro;
+  background-color: white;
 }
 
 .item:nth-child(7n + 1) {
