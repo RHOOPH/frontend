@@ -1,35 +1,35 @@
-const createElements = (type, count) => {
-  let arr = []
-  for (let i = 0; i < count; i++) {
-    arr.push(document.createElement(type))
-  }
-  return arr
-}
+const apps = document.getElementById("apps")
+apps.style.fontSize = "2rem"
 
-const el = document.getElementById("apps")
-const list = createElements("li", 3)
-const span = createElements("span", 3)
-const img = createElements("img", 3)
-const options = ["Netflix", "Amazon Prime", "Hotstar"]
-const imgUrls = [
-  "./Assets/netflix.png",
-  "./Assets/primevideo.png",
-  "./Assets/hotstar.ico",
+const options = [
+  {
+    label: "Netflix",
+    img: "./Assets/netflix.png",
+  },
+  {
+    label: "Amazon Prime",
+    img: "./Assets/primevideo.png",
+  },
+  {
+    label: "Hotstar",
+    img: "./Assets/hotstar.ico",
+  },
 ]
 
-span.forEach((v, i) => {
-  v.innerHTML = options[i]
-  v.style.fontSize = "25px"
-  v.style.marginLeft = "1rem"
-})
-img.forEach((v, i) => {
-  v.src = imgUrls[i]
-  v.height = 25
-  v.width = 25
-})
+const createList = (option) => {
+  const li = document.createElement("li")
+  const span = document.createElement("span")
+  span.innerHTML = option.label
 
-list.forEach((v, i) => {
-  v.append(img[i], span[i])
-  v.style.marginBottom = "1rem"
-})
-el.append(...list)
+  const img = document.createElement("img")
+  img.src = option.img
+  img.height = 25
+  img.width = 25
+  img.style.marginRight = "10px"
+
+  li.append(img, span)
+
+  return li
+}
+
+apps.append(...options.map(createList))
