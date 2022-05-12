@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 body {
-  background-color: beige;
+  background-color: #f2f2f2;
   margin: 0;
 }
 
@@ -12,23 +12,29 @@ body {
   display: flex;
   list-style: none;
   padding: 3rem;
-  background-color: aquamarine;
+  background-color: #4ebd9b;
   margin: 0;
 }
 .navItem {
   margin: 1rem;
+  text-transform: uppercase;
 }
 .navItem:first-child {
   margin-right: auto;
 }
 .navLink {
   text-decoration: none;
+  color: #f1fbfb;
+  font-weight: bold;
 }
 .indexMain {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 5rem;
+}
+#logo {
+  font-size: large;
 }
 .indexMain h1 {
   margin: 2rem;
