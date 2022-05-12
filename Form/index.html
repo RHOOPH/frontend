@@ -17,18 +17,12 @@
             placeholder="Enter your username"
             name="username"
             id="username"
-            onchange="validateUserName(this)"
           />
           <span id="validationUserName" class="validationMsg"></span>
         </div>
         <label for="password">Password:</label>
         <div class="rows">
-          <input
-            type="password"
-            name="password"
-            id="password"
-            onchange="validatePassword(this)"
-          />
+          <input type="password" name="password" id="password" />
           <span id="validationPassword" class="validationMsg"></span>
         </div>
         <label for="city">City of employment:</label>
@@ -101,7 +95,7 @@
           </span>
         </span>
       </div>
-      <button type="submit">Submit</button>
+      <button type="submit" id="submit">Submit</button>
       <button type="reset">Reset</button>
     </form>
     <script type="text/javascript" src="index.js"></script>
