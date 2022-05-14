@@ -30,19 +30,19 @@ function Navbar() {
     <nav>
       <Container>
         <NavList>
-          <Logo to="/porfolio">Kowshik</Logo>
+          <Logo to="/portfolio">Kowshik</Logo>
         </NavList>
         <NavList>
-          <NavLink to="/portfolio/work">Work</NavLink>
+          <NavLink to="work">Work</NavLink>
         </NavList>
         <NavList>
           <NavLink to="/portfolio">About</NavLink>
         </NavList>
         <NavList>
-          <NavLink to="/portfolio/blog">Blog</NavLink>
+          <NavLink to="blog">Blog</NavLink>
         </NavList>
         <NavList>
-          <NavLink to="./portfolio/contact">Contact</NavLink>
+          <NavLink to="contact">Contact</NavLink>
         </NavList>
       </Container>
     </nav>

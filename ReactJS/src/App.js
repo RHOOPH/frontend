@@ -8,9 +8,9 @@ function App() {
     <div className="App">
       <Navbar />
       <Routes>
-        <Route path="forms" element={<Forms />} />
-        <Route path="portfolio" element={<Portfolio />} />
-        <Route path="calendar" element={<Calendar />} />
+        <Route path="forms/*" element={<Forms />} />
+        <Route path="portfolio/*" element={<Portfolio />} />
+        <Route path="calendar/*" element={<Calendar />} />
       </Routes>
     </div>
   )
