@@ -1,6 +1,6 @@
 import { useState } from "react"
 import styled from "styled-components"
-import { createCalendar } from "./utils"
+import { createCalendar, months } from "./utils"
 
 const Container = styled.div`
   display: flex;
@@ -26,19 +26,62 @@ const Item = styled.span`
     color: green;
   }
 `
+const Header = styled.div`
+  display: flex;
+  justify-content: center;
+  & > * {
+    margin: 0 0.5rem;
+  }
+`
+const Year = styled.input`
+  width: 8ch;
+`
 
 function Calendar() {
-  const [date, setDate] = useState(new Date())
+  const [formData, setFormData] = useState({
+    month: new Date().getMonth().toString(), //converted to string since input returns string.
+    year: new Date().getFullYear().toString(),
+  })
 
-  const calendarEntries = createCalendar(date)
-
+  const calendarEntries = createCalendar(
+    new Date(formData.year, formData.month)
+  )
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.currentTarget
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        [name]: type === "checkbox" ? checked : value,
+      }
+    })
+  }
+  console.log(formData)
   return (
     <Container>
-      <Grid>
-        {calendarEntries.map((v, i) => (
-          <Item key={i}>{v}</Item>
-        ))}
-      </Grid>
+      <div>
+        <Header>
+          <button>&lt;</button>
+          <select name="month" value={formData.month} onChange={handleChange}>
+            {months.map((v, i) => (
+              <option key={i} value={i}>
+                {v}
+              </option>
+            ))}
+          </select>
+          <Year
+            type="number"
+            name="year"
+            value={formData.year}
+            onChange={handleChange}
+          />
+          <button>&gt;</button>
+        </Header>
+        <Grid>
+          {calendarEntries.map((v, i) => (
+            <Item key={i}>{v}</Item>
+          ))}
+        </Grid>
+      </div>
     </Container>
   )
 }

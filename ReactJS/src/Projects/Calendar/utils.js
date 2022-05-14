@@ -20,3 +20,17 @@ export const createCalendar = (date) => {
     ...new Array((7 - ((numberOfDays + startingDayIndex) % 7)) % 7).fill(""), // empty string for ending blank spaces
   ]
 }
+export const months = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+]
