@@ -1,8 +1,8 @@
-import Forms from "./Projects/Forms/Forms"
+import Forms from "./Projects/Forms"
 import Navbar from "./Navbar"
 import { Routes, Route } from "react-router-dom"
-import Portfolio from "./Projects/Porfolio/Portfolio"
-import Calendar from "./Projects/Calendar/Calendar"
+import Portfolio from "./Projects/Porfolio"
+import Calendar from "./Projects/Calendar"
 function App() {
   return (
     <div className="App">

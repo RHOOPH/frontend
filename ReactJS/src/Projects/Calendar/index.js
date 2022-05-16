@@ -21,7 +21,7 @@ const Item = styled.span`
   &:nth-child(7n + 1) {
     color: red;
   }
-  &:nth-child(7n + 6) {
+  &:nth-child(7n + 13) {
     color: green;
   }
 `
@@ -36,6 +36,9 @@ const Header = styled.div`
 const Year = styled.input`
   width: 8ch;
 `
+
+const LAST_MONTH_INDEX = "11"
+const FIRST_MONTH_INDEX = "0"
 
 function Calendar() {
   const [formData, setFormData] = useState({
@@ -57,15 +60,23 @@ function Calendar() {
   }
   const increment = () => {
     setFormData((p) => {
-      if (Number(p.month) === 11)
-        return { ...p, year: (Number(p.year) + 1).toString(), month: "0" }
+      if (p.month === LAST_MONTH_INDEX)
+        return {
+          ...p,
+          year: (Number(p.year) + 1).toString(),
+          month: FIRST_MONTH_INDEX,
+        }
       else return { ...p, month: (Number(p.month) + 1).toString() }
     })
   }
   const decrement = () => {
     setFormData((p) => {
-      if (Number(p.month) === 0)
-        return { ...p, year: (Number(p.year) - 1).toString(), month: "11" }
+      if (p.month === FIRST_MONTH_INDEX)
+        return {
+          ...p,
+          year: (Number(p.year) - 1).toString(),
+          month: LAST_MONTH_INDEX,
+        }
       else return { ...p, month: (Number(p.month) - 1).toString() }
     })
   }
@@ -76,9 +87,9 @@ function Calendar() {
         <Header>
           <button onClick={decrement}>&lt;</button>
           <select name="month" value={formData.month} onChange={handleChange}>
-            {months.map((v, i) => (
-              <option key={i} value={i}>
-                {v}
+            {months.map((month, i) => (
+              <option key={month} value={i}>
+                {month}
               </option>
             ))}
           </select>

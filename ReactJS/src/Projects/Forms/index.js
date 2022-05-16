@@ -40,8 +40,10 @@ export default function Forms() {
     selfService: false,
   }
   const [formData, setFormData] = useState(initialFormData)
-  const [isUserNameValid, setIsUserNameValid] = useState(false)
-  const [isPasswordValid, setIsPasswordValid] = useState(false)
+  const [error, setError] = useState({
+    username: false,
+    password: false,
+  })
   const [didAttemptSubmit, setDidAttemptSubmit] = useState(false)
   const [didSubmit, setDidSubmit] = useState(false)
 
@@ -59,8 +61,11 @@ export default function Forms() {
     setDidAttemptSubmit(true)
     const validUsername = checkUsername(formData.username)
     const validPassword = checkPassword(formData.password)
-    setIsUserNameValid(validUsername)
-    setIsPasswordValid(validPassword)
+    setError((p) => ({
+      ...p,
+      username: validUsername,
+      password: validPassword,
+    }))
     if (validUsername && validPassword) submitData()
   }
   const handleReset = (e) => {
@@ -88,7 +93,7 @@ export default function Forms() {
                 onChange={handleChange}
                 value={formData.username}
               />
-              {!isUserNameValid && didAttemptSubmit && (
+              {!error.username && didAttemptSubmit && (
                 <ValidationMsg>Username is required</ValidationMsg>
               )}
             </Rows>
@@ -101,7 +106,7 @@ export default function Forms() {
                 onChange={handleChange}
                 value={formData.password}
               />
-              {!isPasswordValid && didAttemptSubmit && (
+              {!error.password && didAttemptSubmit && (
                 <ValidationMsg>
                   Password must have 8 characters and at least 1 digit.
                 </ValidationMsg>
