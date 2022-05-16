@@ -18,7 +18,7 @@ const Item = styled.span`
   text-align: center;
   padding: 0.5rem;
   background-color: white;
-  &:nth-child(7n + 1) {
+  &:nth-child(7n + 8) {
     color: red;
   }
   &:nth-child(7n + 13) {
