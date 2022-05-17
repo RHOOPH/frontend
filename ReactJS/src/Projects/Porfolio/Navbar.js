@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import {
+  portfolioRoute,
+  workRoute,
+  blogRoute,
+  contactRoute,
+} from "../../routes"
 
 const Container = styled.ul`
   display: flex;
@@ -30,19 +36,19 @@ function Navbar() {
     <nav>
       <Container>
         <NavList>
-          <Logo to="/portfolio">Kowshik</Logo>
+          <Logo to={portfolioRoute}>Kowshik</Logo>
         </NavList>
         <NavList>
-          <NavLink to="work">Work</NavLink>
+          <NavLink to={portfolioRoute + workRoute}>Work</NavLink>
         </NavList>
         <NavList>
-          <NavLink to="/portfolio">About</NavLink>
+          <NavLink to={portfolioRoute}>About</NavLink>
         </NavList>
         <NavList>
-          <NavLink to="blog">Blog</NavLink>
+          <NavLink to={portfolioRoute + blogRoute}>Blog</NavLink>
         </NavList>
         <NavList>
-          <NavLink to="contact">Contact</NavLink>
+          <NavLink to={portfolioRoute + contactRoute}>Contact</NavLink>
         </NavList>
       </Container>
     </nav>

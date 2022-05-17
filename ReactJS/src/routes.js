@@ -1,0 +1,6 @@
+export const formRoute = "/forms"
+export const portfolioRoute = "/portfolio"
+export const calendarRoute = "/calendar"
+export const blogRoute = "/blog"
+export const workRoute = "/work"
+export const contactRoute = "/contact"
