@@ -6,6 +6,9 @@ import Calendar from "./Projects/Calendar"
 import Protected from "./Projects/AuthFlow"
 import Login from "./Projects/AuthFlow/Login"
 import ProtectRoute from "./Projects/AuthFlow/ProtectRoute"
+import Home from "./Home"
+import { useEffect } from "react"
+import { useAuth } from "./Projects/AuthFlow/auth"
 
 import {
   protectedRoute,
@@ -14,8 +17,14 @@ import {
   loginRoute,
   portfolioRoute,
 } from "./routes"
-import Home from "./Home"
+
 function App() {
+  const { getUser } = useAuth()
+
+  useEffect(() => {
+    getUser()
+  }, [])
+
   return (
     <div className="App">
       <Navbar />

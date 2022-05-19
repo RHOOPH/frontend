@@ -80,7 +80,6 @@ function Calendar() {
       else return { ...p, month: (Number(p.month) - 1).toString() }
     })
   }
-  console.log(formData)
   return (
     <Container>
       <div>

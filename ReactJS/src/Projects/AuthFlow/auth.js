@@ -2,34 +2,48 @@ import { createContext, useContext, useState } from "react"
 
 const AuthContext = createContext(null)
 
-const mockVerification = (username, password) =>
-  new Promise((res, rej) => {
-    if (username === "admin" && password === "12345")
-      res({ firstName: "Kowshik", lastName: "Achar" })
-    else rej(Error("username and password did not match"))
-  })
-
 export function AuthProvider({ children }) {
-  const [userInfo, setUserInfo] = useState(null)
+  const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
 
-  const login = ({ username, password }) => {
-    mockVerification(username, password)
+  const getUser = () => {
+    fetch("/open-suite-master/ws/app/info")
       .then((res) => {
-        setUserInfo(res)
-        setError(null)
+        if (res.status === 200) return res.json()
+        else throw new Error("Not logged In")
       })
-      .catch((err) => setError(err))
+      .then((data) => {
+        setError(null)
+        setUser(data["user.name"])
+      })
+      .catch((err) => {
+        setError(err)
+        setUser(null)
+      })
   }
+  const login = ({ username, password }) => {
+    fetch("/open-suite-master/callback", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+      mode: "no-cors",
+    })
+      .then((res) => {
+        if (res.status === 200) getUser()
+        else throw new Error("Wrong Username Or Password")
+      })
+      .catch((err) => {
+        setError(err)
+        setUser(null)
+      })
+  }
+
   const logout = () => {
-    setUserInfo(null)
+    setUser(null)
     setError(null)
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user: userInfo?.firstName, login, logout, error }}
-    >
+    <AuthContext.Provider value={{ user, login, logout, error, getUser }}>
       {children}
     </AuthContext.Provider>
   )
