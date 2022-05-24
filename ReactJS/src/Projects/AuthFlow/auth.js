@@ -9,7 +9,8 @@ export function AuthProvider({ children }) {
   const getUser = () => {
     fetch("/open-suite-master/ws/app/info")
       .then((res) => {
-        if (res.status === 200) return res.json()
+        // server redirects to login page when not logged in with a status code of 302 and then login.jsp resolves with status code 200. However login.jsp does not contain body hence .json() method fails, which throws an error.
+        if (res.ok) return res.json()
         else throw new Error("Not logged In")
       })
       .then((data) => {
@@ -25,10 +26,9 @@ export function AuthProvider({ children }) {
     fetch("/open-suite-master/callback", {
       method: "POST",
       body: JSON.stringify({ username, password }),
-      mode: "no-cors",
     })
       .then((res) => {
-        if (res.status === 200) getUser()
+        if (res.ok) getUser()
         else throw new Error("Wrong Username Or Password")
       })
       .catch((err) => {

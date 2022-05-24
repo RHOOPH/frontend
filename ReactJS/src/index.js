@@ -7,12 +7,12 @@ import { AuthProvider } from "./Projects/AuthFlow/auth"
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
-  <React.StrictMode>
-    <Router>
-      <GlobalStyles />
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </Router>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Router>
+    <GlobalStyles />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </Router>
+  // </React.StrictMode>
 )

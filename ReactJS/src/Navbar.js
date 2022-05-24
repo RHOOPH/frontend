@@ -41,7 +41,7 @@ export default function Navbar() {
       <StyledLink to={formRoute}>Forms</StyledLink>
       <StyledLink to={portfolioRoute}>Portfolio</StyledLink>
       <StyledLink to={calendarRoute}>Calendar</StyledLink>
-      <StyledLink to={protectedRoute}>Protected</StyledLink>
+      <StyledLink to={protectedRoute}>Leads</StyledLink>
 
       {user ? (
         <UserContainer>
