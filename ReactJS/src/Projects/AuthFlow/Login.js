@@ -46,9 +46,6 @@ function Login() {
 
   return (
     <Container>
-      <span>
-        Use <b>"admin"</b> as username and <b>"12345"</b> as password
-      </span>
       <Img src={axelorImg} alt="axelor" />
       {error && <Error> {error.message}</Error>}
       <Input
