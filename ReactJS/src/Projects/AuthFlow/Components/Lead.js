@@ -10,23 +10,27 @@ const GridItem = styled.div`
 const status = ["New", "Assigned", "In process", "Converted", "Lost"]
 
 function Lead({ data, fields, ...props }) {
-  return fields.map(({ name }, index) => {
-    const item = data[name]
-    let value
+  return (
+    <tr>
+      {fields.map(({ name }, index) => {
+        const item = data[name]
+        let value
 
-    switch (name) {
-      case "user":
-        value = item?.fullName
-        break
-      case "statusSelect":
-        value = status[parseInt(item) - 1]
-        break
-      default:
-        value = item
-        break
-    }
+        switch (name) {
+          case "user":
+            value = item?.fullName
+            break
+          case "statusSelect":
+            value = status[parseInt(item) - 1]
+            break
+          default:
+            value = item
+            break
+        }
 
-    return <GridItem key={index}>{value}</GridItem>
-  })
+        return <td key={index}>{value}</td>
+      })}
+    </tr>
+  )
 }
 export default Lead

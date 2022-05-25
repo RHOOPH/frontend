@@ -72,14 +72,18 @@ function Protected() {
       ) : error ? (
         <h1>{error.message}</h1>
       ) : (
-        <Grid>
-          {fields.map(({ name, label }) => (
-            <GridLabel key={name}>{label}</GridLabel>
-          ))}
-          {data?.data?.map((lead) => (
-            <Lead data={lead} fields={fields} key={lead.id} />
-          ))}
-        </Grid>
+        <table>
+          <thead>
+            {fields.map(({ name, label }) => (
+              <th key={name}>{label}</th>
+            ))}
+          </thead>
+          <tbody>
+            {data?.data?.map((lead) => (
+              <Lead data={lead} fields={fields} key={lead.id} />
+            ))}
+          </tbody>
+        </table>
       )}
     </Container>
   )
