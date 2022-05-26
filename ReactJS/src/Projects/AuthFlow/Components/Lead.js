@@ -1,17 +1,22 @@
 import styled from "styled-components"
 
-const GridItem = styled.div`
+const Row = styled.tr`
+  /* padding: 1rem; */
+  /* background-color: white; */
+  /* font-size: 13px; */
+  /* text-overflow: ellipsis; */
+`
+const Data = styled.td`
   padding: 0.5rem;
-  background-color: white;
-  font-size: 13px;
-  text-overflow: ellipsis;
+  font-size: 1rem;
 `
 
 const status = ["New", "Assigned", "In process", "Converted", "Lost"]
 
 function Lead({ data, fields, ...props }) {
   return (
-    <tr>
+    <Row>
+      <td>Edit</td>
       {fields.map(({ name }, index) => {
         const item = data[name]
         let value
@@ -28,9 +33,10 @@ function Lead({ data, fields, ...props }) {
             break
         }
 
-        return <td key={index}>{value}</td>
+        return <Data key={index}>{value}</Data>
       })}
-    </tr>
+      <td>Actions</td>
+    </Row>
   )
 }
 export default Lead

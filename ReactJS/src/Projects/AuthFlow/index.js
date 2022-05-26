@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import readCookie from "./readCookie"
 import styled from "styled-components"
 import Lead from "./Components/Lead"
+import { Link } from "react-router-dom"
+import { addLeadRoute } from "../../routes"
 
 const fields = [
   { name: "firstName", label: "First Name" },
@@ -17,24 +19,10 @@ const Container = styled.main`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 `
-const Grid = styled.div`
-  display: inline-grid;
-  grid-template-columns: repeat(${fields.length}, auto);
-  text-align: center;
-  gap: 1px;
-  border: 1px solid black;
-  background-color: black;
-  margin: 2rem;
-`
-
-const GridLabel = styled.div`
-  font-weight: 600;
-  resize: horizontal;
-  overflow: hidden;
-  background-color: white;
-  padding: 1rem;
-  text-overflow: ellipsis;
+const StyledLink = styled(Link)`
+  margin: 1rem;
 `
 function Protected() {
   const [data, setData] = useState({})
@@ -72,18 +60,25 @@ function Protected() {
       ) : error ? (
         <h1>{error.message}</h1>
       ) : (
-        <table>
-          <thead>
-            {fields.map(({ name, label }) => (
-              <th key={name}>{label}</th>
-            ))}
-          </thead>
-          <tbody>
-            {data?.data?.map((lead) => (
-              <Lead data={lead} fields={fields} key={lead.id} />
-            ))}
-          </tbody>
-        </table>
+        <>
+          <StyledLink to={addLeadRoute}>Add New</StyledLink>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                {fields.map(({ name, label }) => (
+                  <th key={name}>{label}</th>
+                ))}
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.data?.map((lead) => (
+                <Lead data={lead} fields={fields} key={lead.id} />
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </Container>
   )

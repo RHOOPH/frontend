@@ -3,12 +3,13 @@ import Navbar from "./Navbar"
 import { Routes, Route } from "react-router-dom"
 import Portfolio from "./Projects/Porfolio"
 import Calendar from "./Projects/Calendar"
-import Protected from "./Projects/AuthFlow"
+import LeadList from "./Projects/AuthFlow"
 import Login from "./Projects/AuthFlow/Login"
 import ProtectRoute from "./Projects/AuthFlow/ProtectRoute"
 import Home from "./Home"
 import { useEffect } from "react"
 import { useAuth } from "./Projects/AuthFlow/auth"
+import AddLead from "./Projects/AuthFlow/Components/AddLead"
 
 import {
   protectedRoute,
@@ -16,6 +17,7 @@ import {
   formRoute,
   loginRoute,
   portfolioRoute,
+  addLeadRoute,
 } from "./routes"
 
 function App() {
@@ -36,7 +38,8 @@ function App() {
         <Route path={loginRoute} element={<Login />} />
         {/* anything inside ProtectRoute component will be protected */}
         <Route element={<ProtectRoute />}>
-          <Route path={protectedRoute + "/*"} element={<Protected />} />
+          <Route path={protectedRoute + "/*"} element={<LeadList />} />
+          <Route path={addLeadRoute} element={<AddLead />} />
         </Route>
       </Routes>
     </div>
