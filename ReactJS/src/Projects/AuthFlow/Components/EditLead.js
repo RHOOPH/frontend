@@ -18,10 +18,6 @@ const OuterContainer = styled.div`
 `
 
 export default function EditLead() {
-  // known bugs: once user or jobTitlefunction is selected and sent to the server.
-  // It can't visually be unset, however state does change and upon submitting ,value gets reset to null. So the bug is only in display.
-  // Cause: value becomes an empty string and value in server is shown as selected value.
-
   const [formData, setFormData] = useState({})
   const [serverData, setServerData] = useState({})
 
@@ -124,7 +120,6 @@ export default function EditLead() {
             version: data.data[0]?.version,
           })
           if (isNaN(userId)) {
-            console.log("navigating to ", `./${data?.data[0]?.id}`)
             navigate(`${protectedRoute}/${editRoute}/${data?.data[0]?.id}`, {
               replace: true,
             })
@@ -139,7 +134,8 @@ export default function EditLead() {
     formData[propertyName] !== ""
       ? formData[propertyName]
       : Object.keys(serverData).includes(propertyName) &&
-        serverData[propertyName] !== null
+        serverData[propertyName] !== null &&
+        formData[propertyName] !== ""
       ? serverData[propertyName]
       : defaultValue
 
