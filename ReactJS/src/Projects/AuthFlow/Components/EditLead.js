@@ -17,7 +17,11 @@ const OuterContainer = styled.div`
   min-height: 70vh;
 `
 
-function EditLead() {
+export default function EditLead() {
+  // known bugs: once user or jobTitlefunction is selected and sent to the server.
+  // It can't visually be unset, however state does change and upon submitting ,value gets reset to null. So the bug is only in display.
+  // Cause: value becomes an empty string and value in server is shown as selected value.
+
   const [formData, setFormData] = useState({})
   const [serverData, setServerData] = useState({})
 
@@ -32,7 +36,10 @@ function EditLead() {
   const GetOptions = (
     name,
     url,
-    body = { fields: ["id", "name"], sortBy: ["id"] }
+    body = {
+      fields: ["id", "name"],
+      sortBy: ["id"],
+    }
   ) => {
     !options[name][0] &&
       fetch(url + "/search", {
@@ -113,7 +120,9 @@ function EditLead() {
       .then((data) => {
         if (data.status === 0) {
           setServerData(data.data[0])
-          setFormData({ version: data.data[0]?.version })
+          setFormData({
+            version: data.data[0]?.version,
+          })
           if (isNaN(userId)) {
             console.log("navigating to ", `./${data?.data[0]?.id}`)
             navigate(`${protectedRoute}/${editRoute}/${data?.data[0]?.id}`, {
@@ -144,7 +153,10 @@ function EditLead() {
         .then((data) => {
           if (data.status === 0) {
             setServerData(data.data[0])
-            setFormData((p) => ({ ...p, version: data.data[0]?.version }))
+            setFormData((p) => ({
+              ...p,
+              version: data.data[0]?.version,
+            }))
           } else throw data.data
         })
         .catch((err) => console.log(err))
@@ -259,4 +271,3 @@ function EditLead() {
     </OuterContainer>
   )
 }
-export default EditLead
