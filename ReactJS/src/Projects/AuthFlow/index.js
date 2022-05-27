@@ -28,6 +28,7 @@ function Leads() {
   const [data, setData] = useState({})
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     setLoading(true)
@@ -55,7 +56,7 @@ function Leads() {
         setData({})
         setLoading(false)
       })
-  }, [])
+  }, [refresh])
   return (
     <Container>
       {loading ? (
@@ -64,7 +65,10 @@ function Leads() {
         <h1>{error.message}</h1>
       ) : (
         <>
-          <StyledLink to={editRoute + "/new"}>Add New</StyledLink>
+          <div>
+            <StyledLink to={editRoute + "/new"}>Add New</StyledLink>
+            <button onClick={() => setRefresh((p) => p + 1)}>🔄</button>
+          </div>
           <table>
             <thead>
               <tr>

@@ -4,9 +4,11 @@ import styled from "styled-components"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { protectedRoute, editRoute } from "../../../routes"
+
 const functionURL =
   "/open-suite-master/ws/rest/com.axelor.apps.base.db.Function"
 const LeadURL = "/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead"
+
 const OuterContainer = styled.div`
   display: flex;
   align-items: center;
@@ -59,8 +61,6 @@ function EditLead() {
         formattedValue = jobTitleFunctionOptions.find(
           (v) => v.id === parseInt(value)
         )
-
-        //passing { id:parseInt(value)} will also work.
         break
       default:
         formattedValue = value
@@ -97,7 +97,7 @@ function EditLead() {
       .then((data) => {
         if (data.status === 0) {
           setServerData(data.data[0])
-          setFormData({ version: data.data[0]?.version }) //clearing form data but keeping only version for subsequent post reqs
+          setFormData({ version: data.data[0]?.version })
           if (isNaN(userId)) {
             console.log("navigating to ", `./${data?.data[0]?.id}`)
             navigate(`${protectedRoute}/${editRoute}/${data?.data[0]?.id}`, {
@@ -132,7 +132,7 @@ function EditLead() {
         .catch((err) => console.log(err))
     }
   }, [userId, serverData.id])
-  console.log(formData)
+
   return (
     <OuterContainer>
       <form onSubmit={handleSubmit}>
@@ -175,7 +175,7 @@ function EditLead() {
                 : Object.keys(serverData).includes("emailAddress")
                 ? serverData.emailAddress.name.replace(/[\[\]']+/g, "")
                 : ""
-            } //server doesn't send address property but name property which has square brackets around the address.
+            } //server doesn't send address property but sends name property which has square brackets around the address.
           />
         </div>
         <div>
@@ -202,7 +202,7 @@ function EditLead() {
           <select
             name="jobTitleFunction"
             onChange={handleChange}
-            value={controlledValue("jobTitleFunction", { id: "" }).id} //hopefully id is not 0 :)
+            value={controlledValue("jobTitleFunction", { id: "" }).id}
             onFocus={GetJobTitleFunction}
           >
             <option value="">Select JobTitle</option>

@@ -19,6 +19,7 @@ import {
   portfolioRoute,
   editRoute,
 } from "./routes"
+import { Navigate } from "react-router-dom"
 
 function App() {
   const { getUser } = useAuth()
@@ -39,6 +40,10 @@ function App() {
         {/* anything inside ProtectRoute component will be protected */}
         <Route element={<ProtectRoute />}>
           <Route path={protectedRoute + "/*"} element={<LeadList />} />
+          <Route
+            path={protectedRoute + "/" + editRoute}
+            element={<Navigate to={"new"} replace={true} />}
+          />
           <Route
             path={protectedRoute + "/" + editRoute + "/:userId"}
             element={<EditLead />}
