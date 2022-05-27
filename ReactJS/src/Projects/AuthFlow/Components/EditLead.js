@@ -70,11 +70,13 @@ function EditLead() {
         formattedValue = options.jobTitleFunctionOptions.find(
           (v) => v.id === parseInt(value)
         )
+        if (formattedValue === undefined) formattedValue = ""
         break
       case "user":
         formattedValue = options.userOptions.find(
           (v) => v.id === parseInt(value)
         )
+        if (formattedValue === undefined) formattedValue = ""
         break
       default:
         formattedValue = value
@@ -124,7 +126,8 @@ function EditLead() {
   }
 
   const controlledValue = (propertyName, defaultValue) =>
-    Object.keys(formData).includes(propertyName)
+    Object.keys(formData).includes(propertyName) &&
+    formData[propertyName] !== ""
       ? formData[propertyName]
       : Object.keys(serverData).includes(propertyName) &&
         serverData[propertyName] !== null
@@ -224,7 +227,7 @@ function EditLead() {
             name="jobTitleFunction"
             onChange={handleChange}
             value={controlledValue("jobTitleFunction", { id: "" }).id}
-            onFocus={GetOptions("jobTitleFunctionOptions", functionURL)}
+            onFocus={() => GetOptions("jobTitleFunctionOptions", functionURL)}
           >
             <option value="">Select JobTitle</option>
             {options.jobTitleFunctionOptions.map((v) => (
@@ -239,7 +242,7 @@ function EditLead() {
             name="user"
             onChange={handleChange}
             value={controlledValue("user", { id: "" }).id}
-            onFocus={GetOptions("userOptions", userURL)}
+            onFocus={() => GetOptions("userOptions", userURL)}
           >
             <option value="">Select User</option>
             {options.userOptions.map((v) => (
