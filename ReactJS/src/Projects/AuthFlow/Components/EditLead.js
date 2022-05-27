@@ -8,6 +8,7 @@ import { protectedRoute, editRoute } from "../../../routes"
 const functionURL =
   "/open-suite-master/ws/rest/com.axelor.apps.base.db.Function"
 const LeadURL = "/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead"
+const userURL = "/open-suite-master/ws/rest/com.axelor.auth.db.User"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -20,16 +21,23 @@ function EditLead() {
   const [formData, setFormData] = useState({})
   const [serverData, setServerData] = useState({})
 
-  const [jobTitleFunctionOptions, setJobTitleFunctionOptions] = useState([])
+  const [options, setOptions] = useState({
+    jobTitleFunctionOptions: [],
+    userOptions: [],
+  })
 
   const { userId } = useParams()
   const navigate = useNavigate()
 
-  const GetJobTitleFunction = () => {
-    !jobTitleFunctionOptions[0] &&
-      fetch(functionURL + "/search", {
+  const GetOptions = (
+    name,
+    url,
+    body = { fields: ["id", "name"], sortBy: ["id"] }
+  ) => {
+    !options[name][0] &&
+      fetch(url + "/search", {
         method: "POST",
-        body: JSON.stringify({ fields: ["id", "name"], sortBy: ["id"] }),
+        body: JSON.stringify(body),
         headers: {
           "X-CSRF-Token": readCookie("CSRF-TOKEN"),
         },
@@ -40,12 +48,13 @@ function EditLead() {
         })
         .then((data) => {
           if (data.status === 0) {
-            setJobTitleFunctionOptions(
-              data.data.map((v) => {
+            setOptions((p) => ({
+              ...p,
+              [name]: data.data.map((v) => {
                 const { name, id } = v
                 return { name, id }
-              })
-            )
+              }),
+            }))
           } else throw data.data
         })
         .catch((err) => console.log(err))
@@ -58,7 +67,12 @@ function EditLead() {
         formattedValue = { address: value }
         break
       case "jobTitleFunction":
-        formattedValue = jobTitleFunctionOptions.find(
+        formattedValue = options.jobTitleFunctionOptions.find(
+          (v) => v.id === parseInt(value)
+        )
+        break
+      case "user":
+        formattedValue = options.userOptions.find(
           (v) => v.id === parseInt(value)
         )
         break
@@ -112,7 +126,8 @@ function EditLead() {
   const controlledValue = (propertyName, defaultValue) =>
     Object.keys(formData).includes(propertyName)
       ? formData[propertyName]
-      : Object.keys(serverData).includes(propertyName)
+      : Object.keys(serverData).includes(propertyName) &&
+        serverData[propertyName] !== null
       ? serverData[propertyName]
       : defaultValue
 
@@ -131,8 +146,13 @@ function EditLead() {
         })
         .catch((err) => console.log(err))
     }
+    if (!isNaN(userId)) {
+      GetOptions("jobTitleFunctionOptions", functionURL)
+      GetOptions("userOptions", userURL)
+    }
   }, [userId, serverData.id])
 
+  console.log(formData)
   return (
     <OuterContainer>
       <form onSubmit={handleSubmit}>
@@ -172,7 +192,8 @@ function EditLead() {
             value={
               Object.keys(formData).includes("emailAddress")
                 ? formData.emailAddress.address
-                : Object.keys(serverData).includes("emailAddress")
+                : Object.keys(serverData).includes("emailAddress") &&
+                  serverData.emailAddress
                 ? serverData.emailAddress.name.replace(/[\[\]']+/g, "")
                 : ""
             } //server doesn't send address property but sends name property which has square brackets around the address.
@@ -203,10 +224,25 @@ function EditLead() {
             name="jobTitleFunction"
             onChange={handleChange}
             value={controlledValue("jobTitleFunction", { id: "" }).id}
-            onFocus={GetJobTitleFunction}
+            onFocus={GetOptions("jobTitleFunctionOptions", functionURL)}
           >
             <option value="">Select JobTitle</option>
-            {jobTitleFunctionOptions.map((v) => (
+            {options.jobTitleFunctionOptions.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <select
+            name="user"
+            onChange={handleChange}
+            value={controlledValue("user", { id: "" }).id}
+            onFocus={GetOptions("userOptions", userURL)}
+          >
+            <option value="">Select User</option>
+            {options.userOptions.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
               </option>
