@@ -1,5 +1,6 @@
 import styled from "styled-components"
-
+import { Link } from "react-router-dom"
+import { editRoute, protectedRoute } from "../../../routes"
 const Row = styled.tr`
   /* padding: 1rem; */
   /* background-color: white; */
@@ -16,7 +17,9 @@ const status = ["New", "Assigned", "In process", "Converted", "Lost"]
 function Lead({ data, fields, ...props }) {
   return (
     <Row>
-      <td>Edit</td>
+      <td>
+        <Link to={protectedRoute + "/" + editRoute + "/" + data.id}>Edit</Link>
+      </td>
       {fields.map(({ name }, index) => {
         const item = data[name]
         let value

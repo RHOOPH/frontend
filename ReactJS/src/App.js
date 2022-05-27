@@ -9,7 +9,7 @@ import ProtectRoute from "./Projects/AuthFlow/ProtectRoute"
 import Home from "./Home"
 import { useEffect } from "react"
 import { useAuth } from "./Projects/AuthFlow/auth"
-import AddLead from "./Projects/AuthFlow/Components/AddLead"
+import EditLead from "./Projects/AuthFlow/Components/EditLead"
 
 import {
   protectedRoute,
@@ -17,7 +17,7 @@ import {
   formRoute,
   loginRoute,
   portfolioRoute,
-  addLeadRoute,
+  editRoute,
 } from "./routes"
 
 function App() {
@@ -39,7 +39,10 @@ function App() {
         {/* anything inside ProtectRoute component will be protected */}
         <Route element={<ProtectRoute />}>
           <Route path={protectedRoute + "/*"} element={<LeadList />} />
-          <Route path={addLeadRoute} element={<AddLead />} />
+          <Route
+            path={protectedRoute + "/" + editRoute + "/:userId"}
+            element={<EditLead />}
+          />
         </Route>
       </Routes>
     </div>

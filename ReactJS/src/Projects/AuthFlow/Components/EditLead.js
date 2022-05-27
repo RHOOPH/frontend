@@ -1,7 +1,12 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import readCookie from "../readCookie"
 import styled from "styled-components"
-
+import { useParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { protectedRoute, editRoute } from "../../../routes"
+const functionURL =
+  "/open-suite-master/ws/rest/com.axelor.apps.base.db.Function"
+const LeadURL = "/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead"
 const OuterContainer = styled.div`
   display: flex;
   align-items: center;
@@ -9,22 +14,24 @@ const OuterContainer = styled.div`
   min-height: 70vh;
 `
 
-function AddLead() {
+function EditLead() {
   const [formData, setFormData] = useState({})
+  const [serverData, setServerData] = useState({})
 
   const [jobTitleFunctionOptions, setJobTitleFunctionOptions] = useState([])
+
+  const { userId } = useParams()
+  const navigate = useNavigate()
+
   const GetJobTitleFunction = () => {
     !jobTitleFunctionOptions[0] &&
-      fetch(
-        "/open-suite-master/ws/rest/com.axelor.apps.base.db.Function/search",
-        {
-          method: "POST",
-          body: JSON.stringify({ fields: ["id", "name"], sortBy: ["id"] }),
-          headers: {
-            "X-CSRF-Token": readCookie("CSRF-TOKEN"),
-          },
-        }
-      )
+      fetch(functionURL + "/search", {
+        method: "POST",
+        body: JSON.stringify({ fields: ["id", "name"], sortBy: ["id"] }),
+        headers: {
+          "X-CSRF-Token": readCookie("CSRF-TOKEN"),
+        },
+      })
         .then((res) => {
           if (res.ok) return res.json()
           else throw new Error(`${res.status} ${res.statusText}`)
@@ -76,7 +83,7 @@ function AddLead() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    fetch("/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead", {
+    fetch(isNaN(userId) ? LeadURL : `${LeadURL}/${userId}`, {
       method: "POST",
       body: JSON.stringify({ data: formData }),
       headers: {
@@ -89,12 +96,43 @@ function AddLead() {
       })
       .then((data) => {
         if (data.status === 0) {
-          setFormData((p) => ({ ...p, version: data?.data[0]?.version }))
+          setServerData(data.data[0])
+          setFormData({ version: data.data[0]?.version }) //clearing form data but keeping only version for subsequent post reqs
+          if (isNaN(userId)) {
+            console.log("navigating to ", `./${data?.data[0]?.id}`)
+            navigate(`${protectedRoute}/${editRoute}/${data?.data[0]?.id}`, {
+              replace: true,
+            })
+          }
         } else throw data.data
       })
       .catch((err) => console.log(err))
   }
 
+  const controlledValue = (propertyName, defaultValue) =>
+    Object.keys(formData).includes(propertyName)
+      ? formData[propertyName]
+      : Object.keys(serverData).includes(propertyName)
+      ? serverData[propertyName]
+      : defaultValue
+
+  useEffect(() => {
+    if (!isNaN(userId) && serverData.id === undefined) {
+      fetch(LeadURL + "/" + userId)
+        .then((res) => {
+          if (res.ok) return res.json()
+          else throw new Error(`${res.status} ${res.statusText}`)
+        })
+        .then((data) => {
+          if (data.status === 0) {
+            setServerData(data.data[0])
+            setFormData((p) => ({ ...p, version: data.data[0]?.version }))
+          } else throw data.data
+        })
+        .catch((err) => console.log(err))
+    }
+  }, [userId, serverData.id])
+  console.log(formData)
   return (
     <OuterContainer>
       <form onSubmit={handleSubmit}>
@@ -104,7 +142,7 @@ function AddLead() {
             placeholder="Last Name"
             name="name"
             onChange={handleChange}
-            value={formData.name || ""}
+            value={controlledValue("name", "")}
           />
         </div>
         <div>
@@ -113,7 +151,7 @@ function AddLead() {
             placeholder="First Name"
             name="firstName"
             onChange={handleChange}
-            value={formData.firstName || ""}
+            value={controlledValue("firstName", "")}
           />
         </div>
         <div>
@@ -122,7 +160,7 @@ function AddLead() {
             placeholder="Enterprise Name"
             name="enterpriseName"
             onChange={handleChange}
-            value={formData.enterpriseName || ""}
+            value={controlledValue("enterpriseName", "")}
           />
         </div>
         <div>
@@ -131,7 +169,13 @@ function AddLead() {
             placeholder="Email"
             name="emailAddress"
             onChange={handleChange}
-            value={formData.emailAddress?.address || ""}
+            value={
+              Object.keys(formData).includes("emailAddress")
+                ? formData.emailAddress.address
+                : Object.keys(serverData).includes("emailAddress")
+                ? serverData.emailAddress.name.replace(/[\[\]']+/g, "")
+                : ""
+            } //server doesn't send address property but name property which has square brackets around the address.
           />
         </div>
         <div>
@@ -140,17 +184,17 @@ function AddLead() {
             name="isDoNotCall"
             id="callRejection"
             onChange={handleChange}
-            checked={formData.isDoNotCall || false} //or with false to keep the input controlled
+            checked={controlledValue("isDoNotCall", false)}
           />
           <label htmlFor="callRejection">Rejection of calls</label>
         </div>
         <div>
           <input
             type="checkbox"
-            name="isDoNotSendMail"
+            name="isDoNotSendEmail"
             id="emailRejection"
             onChange={handleChange}
-            checked={formData.isDoNotSendMail || false} //or with false to keep the input controlled
+            checked={controlledValue("isDoNotSendEmail", false)}
           />
           <label htmlFor="emailRejection">Rejection of Emails</label>
         </div>
@@ -158,7 +202,7 @@ function AddLead() {
           <select
             name="jobTitleFunction"
             onChange={handleChange}
-            value={formData.jobTitleFunction?.id || ""}
+            value={controlledValue("jobTitleFunction", { id: "" }).id} //hopefully id is not 0 :)
             onFocus={GetJobTitleFunction}
           >
             <option value="">Select JobTitle</option>
@@ -176,4 +220,4 @@ function AddLead() {
     </OuterContainer>
   )
 }
-export default AddLead
+export default EditLead

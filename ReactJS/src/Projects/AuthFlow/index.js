@@ -3,7 +3,7 @@ import readCookie from "./readCookie"
 import styled from "styled-components"
 import Lead from "./Components/Lead"
 import { Link } from "react-router-dom"
-import { addLeadRoute } from "../../routes"
+import { editRoute } from "../../routes"
 
 const fields = [
   { name: "firstName", label: "First Name" },
@@ -24,7 +24,7 @@ const Container = styled.main`
 const StyledLink = styled(Link)`
   margin: 1rem;
 `
-function Protected() {
+function Leads() {
   const [data, setData] = useState({})
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -33,7 +33,10 @@ function Protected() {
     setLoading(true)
     fetch("/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead/search", {
       method: "POST",
-      body: JSON.stringify({ fields: fields.map((field) => field.name) }),
+      body: JSON.stringify({
+        fields: fields.map((field) => field.name),
+        sortBy: ["-createdOn"],
+      }),
       headers: {
         "X-CSRF-Token": readCookie("CSRF-TOKEN"),
       },
@@ -61,7 +64,7 @@ function Protected() {
         <h1>{error.message}</h1>
       ) : (
         <>
-          <StyledLink to={addLeadRoute}>Add New</StyledLink>
+          <StyledLink to={editRoute + "/new"}>Add New</StyledLink>
           <table>
             <thead>
               <tr>
@@ -83,4 +86,4 @@ function Protected() {
     </Container>
   )
 }
-export default Protected
+export default Leads
