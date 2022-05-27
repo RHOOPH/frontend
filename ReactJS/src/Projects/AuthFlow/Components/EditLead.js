@@ -18,6 +18,9 @@ const OuterContainer = styled.div`
 `
 
 export default function EditLead() {
+  /* need to add validation such that an empty string in name can't be sent 
+     to the server
+  */
   const [formData, setFormData] = useState({})
   const [serverData, setServerData] = useState({})
 
