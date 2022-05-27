@@ -143,7 +143,13 @@ export default function EditLead() {
       : defaultValue
 
   useEffect(() => {
-    if (!isNaN(userId) && serverData.id === undefined) {
+    console.log("useEffect Ran")
+    //when userId changes clear any previous serverData & formData and fetch new one
+    if (Object.keys(formData).length !== 0) setFormData({}) //checking length to make sure it's not already empty to avoid unnecessary re-renders
+    if (Object.keys(serverData).length !== 0) setServerData({})
+
+    if (!isNaN(userId)) {
+      console.log("fetched serverdata with id:", userId)
       fetch(LeadURL + "/" + userId)
         .then((res) => {
           if (res.ok) return res.json()
@@ -159,12 +165,13 @@ export default function EditLead() {
           } else throw data.data
         })
         .catch((err) => console.log(err))
-    }
-    if (!isNaN(userId)) {
+
       GetOptions("jobTitleFunctionOptions", functionURL)
       GetOptions("userOptions", userURL)
     }
-  }, [userId, serverData.id])
+  }, [userId])
+
+  console.log("UserId:", userId)
 
   console.log(formData)
   return (
@@ -264,7 +271,7 @@ export default function EditLead() {
           </select>
         </div>
         <button type="submit" id="submit">
-          Submit
+          {isNaN(userId) ? "Create Lead" : "Update Lead"}
         </button>
       </form>
     </OuterContainer>
