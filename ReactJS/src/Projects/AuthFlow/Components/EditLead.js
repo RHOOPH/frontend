@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react"
-import readCookie from "../readCookie"
 import styled from "styled-components"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { protectedRoute, editRoute } from "../../../routes"
-
-const functionURL =
-  "/open-suite-master/ws/rest/com.axelor.apps.base.db.Function"
-const LeadURL = "/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead"
-const userURL = "/open-suite-master/ws/rest/com.axelor.auth.db.User"
+import { getRecord, searchDB, updateDB } from "../aop"
+import { FUNCTION_DB, USER_DB, LEAD_DB } from "../../../databases"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -32,36 +28,17 @@ export default function EditLead() {
   const { userId } = useParams()
   const navigate = useNavigate()
 
-  const GetOptions = (
-    name,
-    url,
-    body = {
-      fields: ["id", "name"],
-      sortBy: ["id"],
-    }
-  ) => {
+  const GetOptions = (database, name) => {
     !options[name][0] &&
-      fetch(url + "/search", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "X-CSRF-Token": readCookie("CSRF-TOKEN"),
-        },
-      })
-        .then((res) => {
-          if (res.ok) return res.json()
-          else throw new Error(`${res.status} ${res.statusText}`)
-        })
+      searchDB(database)
         .then((data) => {
-          if (data.status === 0) {
-            setOptions((p) => ({
-              ...p,
-              [name]: data.data.map((v) => {
-                const { name, id } = v
-                return { name, id }
-              }),
-            }))
-          } else throw data.data
+          setOptions((p) => ({
+            ...p,
+            [name]: data.map((v) => {
+              const { name, id } = v
+              return { name, id }
+            }),
+          }))
         })
         .catch((err) => console.log(err))
   }
@@ -105,29 +82,18 @@ export default function EditLead() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    fetch(isNaN(userId) ? LeadURL : `${LeadURL}/${userId}`, {
-      method: "POST",
-      body: JSON.stringify({ data: formData }),
-      headers: {
-        "X-CSRF-Token": readCookie("CSRF-TOKEN"),
-      },
-    })
-      .then((res) => {
-        if (res.ok) return res.json()
-        else throw new Error(`${res.status} ${res.statusText}`)
-      })
+
+    updateDB(LEAD_DB, formData, isNaN(userId) ? undefined : userId)
       .then((data) => {
-        if (data.status === 0) {
-          setServerData(data.data[0])
-          setFormData({
-            version: data.data[0]?.version,
+        setServerData(data)
+        setFormData({
+          version: data.version,
+        })
+        if (isNaN(userId)) {
+          navigate(`${protectedRoute}/${editRoute}/${data.id}`, {
+            replace: true,
           })
-          if (isNaN(userId)) {
-            navigate(`${protectedRoute}/${editRoute}/${data?.data[0]?.id}`, {
-              replace: true,
-            })
-          }
-        } else throw data.data
+        }
       })
       .catch((err) => console.log(err))
   }
@@ -143,31 +109,24 @@ export default function EditLead() {
       : defaultValue
 
   useEffect(() => {
-    console.log("useEffect Ran")
     //when userId changes clear any previous serverData & formData and fetch new one
     if (Object.keys(formData).length !== 0) setFormData({}) //checking length to make sure it's not already empty to avoid unnecessary re-renders
     if (Object.keys(serverData).length !== 0) setServerData({})
 
     if (!isNaN(userId)) {
       console.log("fetched serverdata with id:", userId)
-      fetch(LeadURL + "/" + userId)
-        .then((res) => {
-          if (res.ok) return res.json()
-          else throw new Error(`${res.status} ${res.statusText}`)
-        })
+      getRecord(LEAD_DB, userId)
         .then((data) => {
-          if (data.status === 0) {
-            setServerData(data.data[0])
-            setFormData((p) => ({
-              ...p,
-              version: data.data[0]?.version,
-            }))
-          } else throw data.data
+          setServerData(data)
+          setFormData((p) => ({
+            ...p,
+            version: data.version,
+          }))
         })
         .catch((err) => console.log(err))
 
-      GetOptions("jobTitleFunctionOptions", functionURL)
-      GetOptions("userOptions", userURL)
+      GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")
+      GetOptions(USER_DB, "userOptions")
     }
   }, [userId])
 
@@ -245,7 +204,7 @@ export default function EditLead() {
             name="jobTitleFunction"
             onChange={handleChange}
             value={controlledValue("jobTitleFunction", { id: "" }).id}
-            onFocus={() => GetOptions("jobTitleFunctionOptions", functionURL)}
+            onFocus={() => GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")}
           >
             <option value="">Select JobTitle</option>
             {options.jobTitleFunctionOptions.map((v) => (
@@ -260,7 +219,7 @@ export default function EditLead() {
             name="user"
             onChange={handleChange}
             value={controlledValue("user", { id: "" }).id}
-            onFocus={() => GetOptions("userOptions", userURL)}
+            onFocus={() => GetOptions(USER_DB, "userOptions")}
           >
             <option value="">Select User</option>
             {options.userOptions.map((v) => (

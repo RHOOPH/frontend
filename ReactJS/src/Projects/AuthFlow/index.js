@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
-import readCookie from "./readCookie"
 import styled from "styled-components"
 import Lead from "./Components/Lead"
 import { Link } from "react-router-dom"
 import { editRoute } from "../../routes"
+import { searchDB } from "./aop"
+import { LEAD_DB } from "../../databases"
 
 const fields = [
   { name: "firstName", label: "First Name" },
@@ -15,6 +16,12 @@ const fields = [
   { name: "user", label: "Assigned to" },
   { name: "statusSelect", label: "status" },
 ]
+
+const body = {
+  fields: fields.map((field) => field.name),
+  sortBy: ["-createdOn"],
+}
+
 const Container = styled.main`
   display: flex;
   justify-content: center;
@@ -25,38 +32,28 @@ const StyledLink = styled(Link)`
   margin: 1rem;
 `
 function Leads() {
-  const [data, setData] = useState({})
+  const [leads, setLeads] = useState([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
   const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     setLoading(true)
-    fetch("/open-suite-master/ws/rest/com.axelor.apps.crm.db.Lead/search", {
-      method: "POST",
-      body: JSON.stringify({
-        fields: fields.map((field) => field.name),
-        sortBy: ["-createdOn"],
-      }),
-      headers: {
-        "X-CSRF-Token": readCookie("CSRF-TOKEN"),
-      },
-    })
-      .then((res) => {
-        if (res.ok) return res.json()
-        else throw new Error(`${res.status} ${res.statusText}`)
-      })
+
+    searchDB(LEAD_DB, body)
       .then((data) => {
-        setData(data)
+        setLeads(data)
         setError(null)
-        setLoading(false)
       })
       .catch((err) => {
         setError(err)
-        setData({})
+        setLeads([])
+      })
+      .finally(() => {
         setLoading(false)
       })
   }, [refresh])
+
   return (
     <Container>
       {loading ? (
@@ -80,7 +77,7 @@ function Leads() {
               </tr>
             </thead>
             <tbody>
-              {data?.data?.map((lead) => (
+              {leads.map((lead) => (
                 <Lead data={lead} fields={fields} key={lead.id} />
               ))}
             </tbody>
