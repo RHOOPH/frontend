@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { protectedRoute, editRoute } from "../../../routes"
 import { getRecord, searchDB, updateDB } from "../aop"
-import { FUNCTION_DB, USER_DB, LEAD_DB } from "../../../databases"
+import { FUNCTION_DB, USER_DB, LEAD_DB, TEAM_DB } from "../../../databases"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -23,6 +23,7 @@ export default function EditLead() {
   const [options, setOptions] = useState({
     jobTitleFunctionOptions: [],
     userOptions: [],
+    teamOptions: [],
   })
 
   const { userId } = useParams()
@@ -57,6 +58,12 @@ export default function EditLead() {
         break
       case "user":
         formattedValue = options.userOptions.find(
+          (v) => v.id === parseInt(value)
+        )
+        if (formattedValue === undefined) formattedValue = ""
+        break
+      case "team":
+        formattedValue = options.teamOptions.find(
           (v) => v.id === parseInt(value)
         )
         if (formattedValue === undefined) formattedValue = ""
@@ -223,6 +230,21 @@ export default function EditLead() {
           >
             <option value="">Select User</option>
             {options.userOptions.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <select
+            name="team"
+            onChange={handleChange}
+            value={controlledValue("team", { id: "" }).id}
+            onFocus={() => GetOptions(TEAM_DB, "teamOptions")}
+          >
+            <option value="">Select Team</option>
+            {options.teamOptions.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
               </option>
