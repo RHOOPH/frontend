@@ -21,6 +21,7 @@ export default function EditLead() {
   const [serverData, setServerData] = useState({})
 
   const [options, setOptions] = useState({
+    //should be in the format name+"Options"
     jobTitleFunctionOptions: [],
     userOptions: [],
     teamOptions: [],
@@ -51,23 +52,14 @@ export default function EditLead() {
         formattedValue = { address: value }
         break
       case "jobTitleFunction":
-        formattedValue = options.jobTitleFunctionOptions.find(
-          (v) => v.id === parseInt(value)
-        )
-        if (formattedValue === undefined) formattedValue = ""
-        break
       case "user":
-        formattedValue = options.userOptions.find(
-          (v) => v.id === parseInt(value)
-        )
-        if (formattedValue === undefined) formattedValue = ""
-        break
       case "team":
-        formattedValue = options.teamOptions.find(
+        formattedValue = options[`${name}Options`].find(
           (v) => v.id === parseInt(value)
         )
         if (formattedValue === undefined) formattedValue = ""
         break
+
       default:
         formattedValue = value
         break
