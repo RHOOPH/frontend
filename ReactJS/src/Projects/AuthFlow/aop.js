@@ -12,7 +12,7 @@ const convertFromJSON = (res) => {
 }
 
 const retrieveData = (rawData) => {
-  if (rawData.status === 0) return rawData.data
+  if (rawData.status === 0 && rawData.data !== undefined) return rawData.data
   else throw rawData.data
 }
 
@@ -45,6 +45,16 @@ export const updateDB = (database, data, id = "") => {
 
 export const getRecord = (database, id = "1") => {
   return fetch(REST + database + "/" + id)
+    .then(convertFromJSON)
+    .then(retrieveData)
+    .then((data) => data[0])
+}
+
+export const deleteRecord = (database, id) => {
+  return fetch(REST + database + "/" + id, {
+    method: "DELETE",
+    headers,
+  })
     .then(convertFromJSON)
     .then(retrieveData)
     .then((data) => data[0])

@@ -14,7 +14,7 @@ const Data = styled.td`
 
 const status = ["New", "Assigned", "In process", "Converted", "Lost"]
 
-function Lead({ data, fields, ...props }) {
+function Lead({ data, fields, deleteLead }) {
   return (
     <Row>
       <td>
@@ -38,7 +38,15 @@ function Lead({ data, fields, ...props }) {
 
         return <Data key={index}>{value}</Data>
       })}
-      <td>Actions</td>
+      <td>
+        <button
+          onClick={() => {
+            deleteLead(data.id)
+          }}
+        >
+          ❌
+        </button>
+      </td>
     </Row>
   )
 }

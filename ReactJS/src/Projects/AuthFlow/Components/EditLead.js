@@ -19,6 +19,7 @@ export default function EditLead() {
   */
   const [formData, setFormData] = useState({})
   const [serverData, setServerData] = useState({})
+  const [error, setError] = useState(false)
 
   const [options, setOptions] = useState({
     //should be in the format name+"Options"
@@ -42,7 +43,9 @@ export default function EditLead() {
             }),
           }))
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.log(err)
+        })
   }
 
   const formatValue = (name, value) => {
@@ -111,9 +114,10 @@ export default function EditLead() {
     //when userId changes clear any previous serverData & formData and fetch new one
     if (Object.keys(formData).length !== 0) setFormData({}) //checking length to make sure it's not already empty to avoid unnecessary re-renders
     if (Object.keys(serverData).length !== 0) setServerData({})
-
+    setError(false)
     if (!isNaN(userId)) {
       console.log("fetched serverdata with id:", userId)
+
       getRecord(LEAD_DB, userId)
         .then((data) => {
           setServerData(data)
@@ -122,131 +126,139 @@ export default function EditLead() {
             version: data.version,
           }))
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          setError(true)
+          if (err === undefined) console.error("No data for ID ", userId)
+          else console.error(err)
+        })
 
       GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")
       GetOptions(USER_DB, "userOptions")
     }
   }, [userId])
 
-  console.log("UserId:", userId)
+  // console.log("UserId:", userId)
 
-  console.log(formData)
+  // console.log(formData)
   return (
     <OuterContainer>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type="text"
-            placeholder="Last Name"
-            name="name"
-            onChange={handleChange}
-            value={controlledValue("name", "")}
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder="First Name"
-            name="firstName"
-            onChange={handleChange}
-            value={controlledValue("firstName", "")}
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder="Enterprise Name"
-            name="enterpriseName"
-            onChange={handleChange}
-            value={controlledValue("enterpriseName", "")}
-          />
-        </div>
-        <div>
-          <input
-            type="email"
-            placeholder="Email"
-            name="emailAddress"
-            onChange={handleChange}
-            value={
-              Object.keys(formData).includes("emailAddress")
-                ? formData.emailAddress.address
-                : Object.keys(serverData).includes("emailAddress") &&
-                  serverData.emailAddress
-                ? serverData.emailAddress.name.replace(/[\[\]']+/g, "")
-                : ""
-            } //server doesn't send address property but sends name property which has square brackets around the address.
-          />
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="isDoNotCall"
-            id="callRejection"
-            onChange={handleChange}
-            checked={controlledValue("isDoNotCall", false)}
-          />
-          <label htmlFor="callRejection">Rejection of calls</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="isDoNotSendEmail"
-            id="emailRejection"
-            onChange={handleChange}
-            checked={controlledValue("isDoNotSendEmail", false)}
-          />
-          <label htmlFor="emailRejection">Rejection of Emails</label>
-        </div>
-        <div>
-          <select
-            name="jobTitleFunction"
-            onChange={handleChange}
-            value={controlledValue("jobTitleFunction", { id: "" }).id}
-            onFocus={() => GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")}
-          >
-            <option value="">Select JobTitle</option>
-            {options.jobTitleFunctionOptions.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <select
-            name="user"
-            onChange={handleChange}
-            value={controlledValue("user", { id: "" }).id}
-            onFocus={() => GetOptions(USER_DB, "userOptions")}
-          >
-            <option value="">Select User</option>
-            {options.userOptions.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <select
-            name="team"
-            onChange={handleChange}
-            value={controlledValue("team", { id: "" }).id}
-            onFocus={() => GetOptions(TEAM_DB, "teamOptions")}
-          >
-            <option value="">Select Team</option>
-            {options.teamOptions.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" id="submit">
-          {isNaN(userId) ? "Create Lead" : "Update Lead"}
-        </button>
-      </form>
+      {error ? (
+        <h1>Some Error occured, please check the console </h1>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input
+              type="text"
+              placeholder="Last Name"
+              name="name"
+              onChange={handleChange}
+              value={controlledValue("name", "")}
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="First Name"
+              name="firstName"
+              onChange={handleChange}
+              value={controlledValue("firstName", "")}
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Enterprise Name"
+              name="enterpriseName"
+              onChange={handleChange}
+              value={controlledValue("enterpriseName", "")}
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              name="emailAddress"
+              onChange={handleChange}
+              value={
+                Object.keys(formData).includes("emailAddress")
+                  ? formData.emailAddress.address
+                  : Object.keys(serverData).includes("emailAddress") &&
+                    serverData.emailAddress
+                  ? serverData.emailAddress.name.replace(/[\[\]']+/g, "")
+                  : ""
+              } //server doesn't send address property but sends name property which has square brackets around the address.
+            />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              name="isDoNotCall"
+              id="callRejection"
+              onChange={handleChange}
+              checked={controlledValue("isDoNotCall", false)}
+            />
+            <label htmlFor="callRejection">Rejection of calls</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              name="isDoNotSendEmail"
+              id="emailRejection"
+              onChange={handleChange}
+              checked={controlledValue("isDoNotSendEmail", false)}
+            />
+            <label htmlFor="emailRejection">Rejection of Emails</label>
+          </div>
+          <div>
+            <select
+              name="jobTitleFunction"
+              onChange={handleChange}
+              value={controlledValue("jobTitleFunction", { id: "" }).id}
+              onFocus={() => GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")}
+            >
+              <option value="">Select JobTitle</option>
+              {options.jobTitleFunctionOptions.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <select
+              name="user"
+              onChange={handleChange}
+              value={controlledValue("user", { id: "" }).id}
+              onFocus={() => GetOptions(USER_DB, "userOptions")}
+            >
+              <option value="">Select User</option>
+              {options.userOptions.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <select
+              name="team"
+              onChange={handleChange}
+              value={controlledValue("team", { id: "" }).id}
+              onFocus={() => GetOptions(TEAM_DB, "teamOptions")}
+            >
+              <option value="">Select Team</option>
+              {options.teamOptions.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" id="submit">
+            {isNaN(userId) ? "Create Lead" : "Update Lead"}
+          </button>
+        </form>
+      )}
     </OuterContainer>
   )
 }

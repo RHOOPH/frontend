@@ -3,7 +3,7 @@ import styled from "styled-components"
 import Lead from "./Components/Lead"
 import { Link } from "react-router-dom"
 import { editRoute } from "../../routes"
-import { searchDB } from "./aop"
+import { deleteRecord, searchDB } from "./aop"
 import { LEAD_DB } from "../../databases"
 
 const fields = [
@@ -36,6 +36,14 @@ function Leads() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
   const [refresh, setRefresh] = useState(0)
+
+  const deleteLead = (id) => {
+    deleteRecord(LEAD_DB, id)
+      .then((data) => {
+        data.id === id && setRefresh((p) => p + 1)
+      })
+      .catch((err) => console.log(err))
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -78,7 +86,12 @@ function Leads() {
             </thead>
             <tbody>
               {leads.map((lead) => (
-                <Lead data={lead} fields={fields} key={lead.id} />
+                <Lead
+                  data={lead}
+                  fields={fields}
+                  key={lead.id}
+                  deleteLead={deleteLead}
+                />
               ))}
             </tbody>
           </table>
