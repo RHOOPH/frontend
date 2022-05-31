@@ -4,7 +4,14 @@ import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { protectedRoute, editRoute } from "../../../routes"
 import { getRecord, searchDB, updateDB } from "../aop"
-import { FUNCTION_DB, USER_DB, LEAD_DB, TEAM_DB } from "../../../databases"
+import {
+  FUNCTION_DB,
+  USER_DB,
+  LEAD_DB,
+  TEAM_DB,
+  SOURCE_DB,
+  CITY_DB,
+} from "../../../databases"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -12,6 +19,33 @@ const OuterContainer = styled.div`
   justify-content: center;
   min-height: 70vh;
 `
+const selectFields = [
+  {
+    database: FUNCTION_DB,
+    name: "jobTitleFunction",
+  },
+  {
+    database: USER_DB,
+    name: "user",
+  },
+  {
+    database: TEAM_DB,
+    name: "team",
+  },
+  {
+    database: SOURCE_DB,
+    name: "source",
+  },
+  {
+    database: CITY_DB,
+    name: "primaryCity",
+  },
+]
+const initialOptions = selectFields.reduce((acc, field) => {
+  const temp = { ...acc }
+  temp[field.name] = []
+  return temp
+}, {})
 
 export default function EditLead() {
   /* need to add validation such that an empty string in name can't be sent 
@@ -21,17 +55,12 @@ export default function EditLead() {
   const [serverData, setServerData] = useState({})
   const [error, setError] = useState(false)
 
-  const [options, setOptions] = useState({
-    //should be in the format name+"Options"
-    jobTitleFunctionOptions: [],
-    userOptions: [],
-    teamOptions: [],
-  })
+  const [options, setOptions] = useState(initialOptions)
 
   const { userId } = useParams()
   const navigate = useNavigate()
 
-  const GetOptions = (database, name) => {
+  const getOptions = (database, name) => {
     !options[name][0] &&
       searchDB(database)
         .then((data) => {
@@ -57,9 +86,8 @@ export default function EditLead() {
       case "jobTitleFunction":
       case "user":
       case "team":
-        formattedValue = options[`${name}Options`].find(
-          (v) => v.id === parseInt(value)
-        )
+      case "source":
+        formattedValue = options[name].find((v) => v.id === parseInt(value))
         if (formattedValue === undefined) formattedValue = ""
         break
 
@@ -132,8 +160,9 @@ export default function EditLead() {
           else console.error(err)
         })
 
-      GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")
-      GetOptions(USER_DB, "userOptions")
+      selectFields.forEach((field) => {
+        getOptions(field.database, field.name)
+      })
     }
   }, [userId])
 
@@ -209,51 +238,26 @@ export default function EditLead() {
             />
             <label htmlFor="emailRejection">Rejection of Emails</label>
           </div>
-          <div>
-            <select
-              name="jobTitleFunction"
-              onChange={handleChange}
-              value={controlledValue("jobTitleFunction", { id: "" }).id}
-              onFocus={() => GetOptions(FUNCTION_DB, "jobTitleFunctionOptions")}
-            >
-              <option value="">Select JobTitle</option>
-              {options.jobTitleFunctionOptions.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <select
-              name="user"
-              onChange={handleChange}
-              value={controlledValue("user", { id: "" }).id}
-              onFocus={() => GetOptions(USER_DB, "userOptions")}
-            >
-              <option value="">Select User</option>
-              {options.userOptions.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <select
-              name="team"
-              onChange={handleChange}
-              value={controlledValue("team", { id: "" }).id}
-              onFocus={() => GetOptions(TEAM_DB, "teamOptions")}
-            >
-              <option value="">Select Team</option>
-              {options.teamOptions.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </div>
+
+          {selectFields.map((field) => {
+            return (
+              <div key={field.name}>
+                <select
+                  name={field.name}
+                  onChange={handleChange}
+                  value={controlledValue(field.name, { id: "" }).id}
+                  onFocus={() => getOptions(field.database, field.name)}
+                >
+                  <option value="">Select {field.name}</option>
+                  {options[field.name].map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )
+          })}
           <button type="submit" id="submit">
             {isNaN(userId) ? "Create Lead" : "Update Lead"}
           </button>
