@@ -11,6 +11,8 @@ import {
   TEAM_DB,
   SOURCE_DB,
   CITY_DB,
+  COUNTRY_DB,
+  REGION_DB,
 } from "../../../databases"
 
 const OuterContainer = styled.div`
@@ -35,6 +37,14 @@ const selectFields = [
   {
     database: SOURCE_DB,
     name: "source",
+  },
+  {
+    database: COUNTRY_DB,
+    name: "primaryCountry",
+  },
+  {
+    database: REGION_DB,
+    name: "primaryState",
   },
   {
     database: CITY_DB,
@@ -78,24 +88,17 @@ export default function EditLead() {
   }
 
   const formatValue = (name, value) => {
-    let formattedValue
-    switch (name) {
-      case "emailAddress":
-        formattedValue = { address: value }
-        break
-      case "jobTitleFunction":
-      case "user":
-      case "team":
-      case "source":
-        formattedValue = options[name].find((v) => v.id === parseInt(value))
-        if (formattedValue === undefined) formattedValue = ""
-        break
-
-      default:
-        formattedValue = value
-        break
+    if (name === "emailAddress") {
+      return { address: value }
     }
-    return formattedValue
+    //.find in below case returns an object if found and undefined if not
+    if (selectFields.find((field) => field.name === name)) {
+      //.find in below case returns an array if found and undefined if not
+      let formattedValue = options[name].find((v) => v.id === parseInt(value))
+      if (formattedValue === undefined) formattedValue = ""
+      return formattedValue
+    }
+    return value
   }
 
   const handleChange = (e) => {
