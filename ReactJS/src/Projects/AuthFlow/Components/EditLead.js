@@ -51,6 +51,24 @@ const selectFields = [
     name: "primaryCity",
   },
 ]
+const inputFields = [
+  {
+    type: "text",
+    title: "Last Name",
+    name: "name",
+  },
+  {
+    type: "text",
+    title: "First Name",
+    name: "firstName",
+  },
+  {
+    type: "text",
+    title: "Enterprise Name",
+    name: "enterpriseName",
+  },
+]
+
 const initialOptions = selectFields.reduce((acc, field) => {
   const temp = { ...acc }
   temp[field.name] = []
@@ -87,22 +105,22 @@ export default function EditLead() {
         })
   }
 
-  const formatValue = (name, value) => {
-    if (name === "emailAddress") {
-      return { address: value }
-    }
-    //.find in below case returns an object if found and undefined if not
-    if (selectFields.find((field) => field.name === name)) {
-      //.find in below case returns an array if found and undefined if not
-      let formattedValue = options[name].find((v) => v.id === parseInt(value))
-      if (formattedValue === undefined) formattedValue = ""
-      return formattedValue
-    }
-    return value
-  }
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.currentTarget
+
+    const formatValue = (name, value) => {
+      if (name === "emailAddress") {
+        return { address: value }
+      }
+      //.find in below case returns an object if found and undefined if not
+      if (selectFields.find((field) => field.name === name)) {
+        //.find in below case returns an array if found and undefined if not
+        let formattedValue = options[name].find((v) => v.id === parseInt(value))
+        if (formattedValue === undefined) formattedValue = ""
+        return formattedValue
+      }
+      return value
+    }
 
     setFormData((prevFormData) => {
       const formattedValue = formatValue(name, value)
@@ -178,33 +196,19 @@ export default function EditLead() {
         <h1>Some Error occured, please check the console </h1>
       ) : (
         <form onSubmit={handleSubmit}>
-          <div>
-            <input
-              type="text"
-              placeholder="Last Name"
-              name="name"
-              onChange={handleChange}
-              value={controlledValue("name", "")}
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              onChange={handleChange}
-              value={controlledValue("firstName", "")}
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              placeholder="Enterprise Name"
-              name="enterpriseName"
-              onChange={handleChange}
-              value={controlledValue("enterpriseName", "")}
-            />
-          </div>
+          {inputFields.map((field) => {
+            return (
+              <div>
+                <input
+                  type={field.type}
+                  placeholder={field.title}
+                  name={field.name}
+                  onChange={handleChange}
+                  value={controlledValue(field.name, "")}
+                />
+              </div>
+            )
+          })}
           <div>
             <input
               type="email"
