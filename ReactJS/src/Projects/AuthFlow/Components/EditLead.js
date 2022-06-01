@@ -149,16 +149,6 @@ export default function EditLead() {
       .catch((err) => console.log(err))
   }
 
-  const controlledValue = (propertyName, defaultValue) =>
-    Object.keys(formData).includes(propertyName) &&
-    formData[propertyName] !== ""
-      ? formData[propertyName]
-      : Object.keys(serverData).includes(propertyName) &&
-        serverData[propertyName] !== null &&
-        formData[propertyName] !== ""
-      ? serverData[propertyName]
-      : defaultValue
-
   useEffect(() => {
     //when userId changes clear any previous serverData & formData and fetch new one
     if (Object.keys(formData).length !== 0) setFormData({}) //checking length to make sure it's not already empty to avoid unnecessary re-renders
@@ -204,7 +194,7 @@ export default function EditLead() {
                   placeholder={field.title}
                   name={field.name}
                   onChange={handleChange}
-                  value={controlledValue(field.name, "")}
+                  value={formData[field.name] ?? serverData[field.name] ?? ""}
                 />
               </div>
             )
@@ -216,12 +206,9 @@ export default function EditLead() {
               name="emailAddress"
               onChange={handleChange}
               value={
-                Object.keys(formData).includes("emailAddress")
-                  ? formData.emailAddress.address
-                  : Object.keys(serverData).includes("emailAddress") &&
-                    serverData.emailAddress
-                  ? serverData.emailAddress.name.replace(/[\[\]']+/g, "")
-                  : ""
+                formData.emailAddress?.address ??
+                serverData.emailAddress?.name?.replace(/[\[\]']+/g, "") ??
+                ""
               } //server doesn't send address property but sends name property which has square brackets around the address.
             />
           </div>
@@ -231,7 +218,7 @@ export default function EditLead() {
               name="isDoNotCall"
               id="callRejection"
               onChange={handleChange}
-              checked={controlledValue("isDoNotCall", false)}
+              checked={formData.isDoNotCall ?? serverData.isDoNotCall ?? false}
             />
             <label htmlFor="callRejection">Rejection of calls</label>
           </div>
@@ -241,7 +228,11 @@ export default function EditLead() {
               name="isDoNotSendEmail"
               id="emailRejection"
               onChange={handleChange}
-              checked={controlledValue("isDoNotSendEmail", false)}
+              checked={
+                formData.isDoNotSendEmail ??
+                serverData.isDoNotSendEmail ??
+                false
+              }
             />
             <label htmlFor="emailRejection">Rejection of Emails</label>
           </div>
@@ -252,7 +243,9 @@ export default function EditLead() {
                 <select
                   name={field.name}
                   onChange={handleChange}
-                  value={controlledValue(field.name, { id: "" }).id}
+                  value={
+                    formData[field.name]?.id ?? serverData[field.name]?.id ?? ""
+                  }
                   onFocus={() => getOptions(field.database, field.name)}
                 >
                   <option value="">Select {field.name}</option>
