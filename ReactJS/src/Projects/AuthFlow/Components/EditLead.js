@@ -178,8 +178,17 @@ export default function EditLead() {
   }, [userId])
 
   // console.log("UserId:", userId)
-
   // console.log(formData)
+
+  const canDisableSubmit = () => {
+    if (isNaN(userId)) {
+      return !formData.name
+    } else {
+      if (formData.name === "") return true
+      else return false
+    }
+  }
+
   return (
     <OuterContainer>
       {error ? (
@@ -188,7 +197,7 @@ export default function EditLead() {
         <form onSubmit={handleSubmit}>
           {inputFields.map((field) => {
             return (
-              <div>
+              <div key={field.name}>
                 <input
                   type={field.type}
                   placeholder={field.title}
@@ -258,7 +267,7 @@ export default function EditLead() {
               </div>
             )
           })}
-          <button type="submit" id="submit">
+          <button type="submit" id="submit" disabled={canDisableSubmit()}>
             {isNaN(userId) ? "Create Lead" : "Update Lead"}
           </button>
         </form>
