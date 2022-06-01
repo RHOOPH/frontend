@@ -1,10 +1,11 @@
 import readCookie from "./readCookie"
 
 const REST = "/open-suite-master/ws/rest/"
-const headers = {
-  Accept: "application/json",
-  "Content-Type": "application/json",
-  "X-CSRF-Token": readCookie("CSRF-TOKEN"),
+
+function Customheaders(cookie) {
+  this.Accept = "application/json"
+  this["Content-Type"] = "application/json"
+  this["X-CSRF-Token"] = cookie
 }
 const convertFromJSON = (res) => {
   if (res.ok) return res.json()
@@ -26,7 +27,7 @@ export const searchDB = (
   return fetch(REST + database + "/search", {
     method: "POST",
     body: JSON.stringify(body),
-    headers,
+    headers: new Customheaders(readCookie("CSRF-TOKEN")),
   })
     .then(convertFromJSON)
     .then(retrieveData)
@@ -36,7 +37,7 @@ export const updateDB = (database, data, id = "") => {
   return fetch(REST + database + "/" + id, {
     method: "POST",
     body: JSON.stringify({ data }),
-    headers,
+    headers: new Customheaders(readCookie("CSRF-TOKEN")),
   })
     .then(convertFromJSON)
     .then(retrieveData)
@@ -53,7 +54,7 @@ export const getRecord = (database, id = "1") => {
 export const deleteRecord = (database, id) => {
   return fetch(REST + database + "/" + id, {
     method: "DELETE",
-    headers,
+    headers: new Customheaders(readCookie("CSRF-TOKEN")),
   })
     .then(convertFromJSON)
     .then(retrieveData)
