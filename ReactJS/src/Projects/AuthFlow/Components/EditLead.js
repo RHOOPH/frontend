@@ -181,12 +181,11 @@ export default function EditLead() {
   // console.log(formData)
 
   const canDisableSubmit = () => {
-    if (isNaN(userId)) {
-      return !formData.name
-    } else {
-      if (formData.name === "") return true
-      else return false
-    }
+    if (isNaN(userId)) return !formData.name
+    if (formData.name === "") return true
+    return false
+    // oneliner
+    // isNaN(userId)?!formData.name:formData.name===""?true:false
   }
 
   return (
