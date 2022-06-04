@@ -94,8 +94,8 @@ export default function EditLead() {
   const { userId } = useParams()
   const navigate = useNavigate()
 
-  const handleChange = (selectedValue) => {
-    setFormData((p) => ({ ...p, ...selectedValue }))
+  const handleChange = (formDataObj) => {
+    setFormData((p) => ({ ...p, ...formDataObj }))
   }
 
   const handleSubmit = (e) => {
