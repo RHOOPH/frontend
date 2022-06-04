@@ -113,7 +113,7 @@ export default function EditLead() {
           })
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.error(err))
   }
 
   useEffect(() => {
@@ -122,8 +122,6 @@ export default function EditLead() {
     if (Object.keys(serverData).length !== 0) setServerData({})
     setError(false)
     if (!isNaN(userId)) {
-      console.log("fetched serverdata with id:", userId)
-
       getRecord(LEAD_DB, userId)
         .then((data) => {
           setServerData(data)

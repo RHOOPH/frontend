@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import axelorImg from "./Assets/axelor.png"
-import { useAuth } from "./auth"
+import axelorImg from "../Assets/axelor.png"
+import { useAuth } from "../auth"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 

@@ -6,7 +6,6 @@ export default function ManyToOne({ database, onSelect, name, value }) {
 
   const getOptions = (e) => {
     if (options.length === 0) {
-      console.log("getting options from ", name)
       searchDB(database)
         .then((data) => {
           setOptions(
@@ -17,7 +16,7 @@ export default function ManyToOne({ database, onSelect, name, value }) {
           )
         })
         .catch((err) => {
-          console.log(err)
+          console.error(err)
         })
     }
   }
@@ -30,7 +29,6 @@ export default function ManyToOne({ database, onSelect, name, value }) {
   }
   useEffect(() => {
     if (value) {
-      console.log("calling options inside useEffect")
       getOptions()
     }
     // eslint-disable-next-line

@@ -42,7 +42,7 @@ function Leads() {
       .then((data) => {
         data.id === id && setRefresh((p) => p + 1)
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.error(err))
   }
 
   useEffect(() => {
