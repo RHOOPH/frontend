@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client"
 import App from "./App"
 import { HashRouter as Router } from "react-router-dom"
 import GlobalStyles from "./GlobalStyles"
-import { AuthProvider } from "./Projects/AuthFlow/auth"
+import { AuthProvider } from "./Projects/AuthFlow/authContext"
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(

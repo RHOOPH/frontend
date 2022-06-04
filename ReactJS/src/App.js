@@ -8,7 +8,7 @@ import Login from "./Projects/AuthFlow/Components/Login"
 import ProtectRoute from "./Projects/AuthFlow/Components/ProtectRoute"
 import Home from "./Home"
 import { useEffect } from "react"
-import { useAuth } from "./Projects/AuthFlow/auth"
+import { useAuth } from "./Projects/AuthFlow/authContext"
 import EditLead from "./Projects/AuthFlow/Components/EditLead"
 import {
   protectedRoute,

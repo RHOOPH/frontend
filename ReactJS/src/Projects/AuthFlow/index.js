@@ -3,7 +3,7 @@ import styled from "styled-components"
 import Lead from "./Components/Lead"
 import { Link } from "react-router-dom"
 import { editRoute } from "../../routes"
-import { deleteRecord, searchDB } from "./aop"
+import { deleteRecord, searchDB } from "./aopUtils"
 import { LEAD_DB } from "../../databases"
 
 const fields = [

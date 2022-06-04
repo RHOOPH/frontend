@@ -1,6 +1,6 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom"
 import { loginRoute } from "../../../routes"
-import { useAuth } from "../auth"
+import { useAuth } from "../authContext"
 
 function ProtectRoute() {
   const { user } = useAuth()

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { searchDB } from "../aop"
+import { searchDB } from "../aopUtils"
 
 export default function ManyToOne({ database, onSelect, name, value }) {
   const [options, setOptions] = useState([])

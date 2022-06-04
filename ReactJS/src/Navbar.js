@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom"
 import styled from "styled-components"
-import { useAuth } from "./Projects/AuthFlow/auth"
+import { useAuth } from "./Projects/AuthFlow/authContext"
 import {
   protectedRoute,
   calendarRoute,

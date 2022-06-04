@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { protectedRoute, editRoute } from "../../../routes"
-import { getRecord, updateDB } from "../aop"
+import { getRecord, updateDB } from "../aopUtils"
 import {
   FUNCTION_DB,
   USER_DB,
