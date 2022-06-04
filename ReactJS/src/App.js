@@ -10,7 +10,6 @@ import Home from "./Home"
 import { useEffect } from "react"
 import { useAuth } from "./Projects/AuthFlow/auth"
 import EditLead from "./Projects/AuthFlow/Components/EditLead"
-
 import {
   protectedRoute,
   calendarRoute,
@@ -26,6 +25,7 @@ function App() {
 
   useEffect(() => {
     getUser()
+    // eslint-disable-next-line
   }, [])
 
   return (

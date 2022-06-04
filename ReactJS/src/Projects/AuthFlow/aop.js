@@ -1,7 +1,7 @@
 import readCookie from "./readCookie"
 
 const REST = "/open-suite-master/ws/rest/"
-
+const META = "/open-suite-master/ws/meta/fields/"
 const headers = (cookie) => ({
   Accept: "application/json",
   "Content-Type": "application/json",
@@ -59,4 +59,10 @@ export const deleteRecord = (database, id) => {
     .then(convertFromJSON)
     .then(retrieveData)
     .then((data) => data[0])
+}
+export const getMeta = (database) => {
+  return fetch(META + database)
+    .then(convertFromJSON)
+    .then(retrieveData)
+    .then((data) => data.fields)
 }

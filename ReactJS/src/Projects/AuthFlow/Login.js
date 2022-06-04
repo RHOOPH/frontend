@@ -42,6 +42,7 @@ function Login() {
 
   useEffect(() => {
     user && navigate(fromPath, { replace: true })
+    // eslint-disable-next-line
   }, [user])
 
   return (

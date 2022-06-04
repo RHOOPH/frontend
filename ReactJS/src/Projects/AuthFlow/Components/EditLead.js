@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { protectedRoute, editRoute } from "../../../routes"
-import { getRecord, searchDB, updateDB } from "../aop"
+import { getRecord, updateDB } from "../aop"
 import {
   FUNCTION_DB,
   USER_DB,
@@ -14,6 +14,8 @@ import {
   COUNTRY_DB,
   REGION_DB,
 } from "../../../databases"
+import ManyToOne from "./ManyToOne"
+import OneToOne from "./OneToOne"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -21,7 +23,7 @@ const OuterContainer = styled.div`
   justify-content: center;
   min-height: 70vh;
 `
-const selectFields = [
+const manyToOneFields = [
   {
     database: FUNCTION_DB,
     name: "jobTitleFunction",
@@ -51,7 +53,7 @@ const selectFields = [
     name: "primaryCity",
   },
 ]
-const inputFields = [
+const oneToOneFields = [
   {
     type: "text",
     title: "Last Name",
@@ -67,68 +69,33 @@ const inputFields = [
     title: "Enterprise Name",
     name: "enterpriseName",
   },
+  {
+    type: "email",
+    title: "Email",
+    name: "emailAddress",
+  },
+  {
+    type: "checkbox",
+    title: "Rejection of calls",
+    name: "isDoNotCall",
+  },
+  {
+    type: "checkbox",
+    title: "Rejection of Emails",
+    name: "isDoNotSendEmail",
+  },
 ]
 
-const initialOptions = selectFields.reduce((acc, field) => {
-  const temp = { ...acc }
-  temp[field.name] = []
-  return temp
-}, {})
-
 export default function EditLead() {
-  /* need to add validation such that an empty string in name can't be sent 
-     to the server
-  */
   const [formData, setFormData] = useState({})
   const [serverData, setServerData] = useState({})
   const [error, setError] = useState(false)
 
-  const [options, setOptions] = useState(initialOptions)
-
   const { userId } = useParams()
   const navigate = useNavigate()
 
-  const getOptions = (database, name) => {
-    !options[name][0] &&
-      searchDB(database)
-        .then((data) => {
-          setOptions((p) => ({
-            ...p,
-            [name]: data.map((v) => {
-              const { name, id } = v
-              return { name, id }
-            }),
-          }))
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-  }
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.currentTarget
-
-    const formatValue = (name, value) => {
-      if (name === "emailAddress") {
-        return { address: value }
-      }
-      //.find in below case returns an object if found and undefined if not
-      if (selectFields.find((field) => field.name === name)) {
-        //.find in below case returns an array if found and undefined if not
-        let formattedValue = options[name].find((v) => v.id === parseInt(value))
-        if (formattedValue === undefined) formattedValue = ""
-        return formattedValue
-      }
-      return value
-    }
-
-    setFormData((prevFormData) => {
-      const formattedValue = formatValue(name, value)
-      return {
-        ...prevFormData,
-        [name]: type === "checkbox" ? checked : formattedValue,
-      }
-    })
+  const handleChange = (selectedValue) => {
+    setFormData((p) => ({ ...p, ...selectedValue }))
   }
 
   const handleSubmit = (e) => {
@@ -170,15 +137,9 @@ export default function EditLead() {
           if (err === undefined) console.error("No data for ID ", userId)
           else console.error(err)
         })
-
-      selectFields.forEach((field) => {
-        getOptions(field.database, field.name)
-      })
     }
+    // eslint-disable-next-line
   }, [userId])
-
-  // console.log("UserId:", userId)
-  // console.log(formData)
 
   const canDisableSubmit = () => {
     if (isNaN(userId)) return !formData.name
@@ -194,76 +155,33 @@ export default function EditLead() {
         <h1>Some Error occured, please check the console </h1>
       ) : (
         <form onSubmit={handleSubmit}>
-          {inputFields.map((field) => {
+          {oneToOneFields.map((field) => {
             return (
-              <div key={field.name}>
-                <input
-                  type={field.type}
-                  placeholder={field.title}
-                  name={field.name}
-                  onChange={handleChange}
-                  value={formData[field.name] ?? serverData[field.name] ?? ""}
-                />
-              </div>
+              <OneToOne
+                key={field.name}
+                name={field.name}
+                type={field.type}
+                title={field.title}
+                onChange={handleChange}
+                value={
+                  field.name !== "emailAddress"
+                    ? formData[field.name] ?? serverData[field.name]
+                    : formData.emailAddress?.address ??
+                      serverData.emailAddress?.name?.replace(/[\[\]']+/g, "")
+                  //for email server doesn't send address property but sends name property which has square brackets around the address.
+                }
+              />
             )
           })}
-          <div>
-            <input
-              type="email"
-              placeholder="Email"
-              name="emailAddress"
-              onChange={handleChange}
-              value={
-                formData.emailAddress?.address ??
-                serverData.emailAddress?.name?.replace(/[\[\]']+/g, "") ??
-                ""
-              } //server doesn't send address property but sends name property which has square brackets around the address.
-            />
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="isDoNotCall"
-              id="callRejection"
-              onChange={handleChange}
-              checked={formData.isDoNotCall ?? serverData.isDoNotCall ?? false}
-            />
-            <label htmlFor="callRejection">Rejection of calls</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="isDoNotSendEmail"
-              id="emailRejection"
-              onChange={handleChange}
-              checked={
-                formData.isDoNotSendEmail ??
-                serverData.isDoNotSendEmail ??
-                false
-              }
-            />
-            <label htmlFor="emailRejection">Rejection of Emails</label>
-          </div>
-
-          {selectFields.map((field) => {
+          {manyToOneFields.map((field) => {
             return (
-              <div key={field.name}>
-                <select
-                  name={field.name}
-                  onChange={handleChange}
-                  value={
-                    formData[field.name]?.id ?? serverData[field.name]?.id ?? ""
-                  }
-                  onFocus={() => getOptions(field.database, field.name)}
-                >
-                  <option value="">Select {field.name}</option>
-                  {options[field.name].map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <ManyToOne
+                key={field.name}
+                database={field.database}
+                name={field.name}
+                onSelect={handleChange}
+                value={formData[field.name] ?? serverData[field.name]}
+              />
             )
           })}
           <button type="submit" id="submit" disabled={canDisableSubmit()}>
