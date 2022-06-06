@@ -180,7 +180,11 @@ export default function EditLead() {
                 database={field.database}
                 name={field.name}
                 onSelect={handleChange}
-                value={formData[field.name] ?? serverData[field.name]}
+                value={
+                  formData.hasOwnProperty(field.name)
+                    ? formData[field.name]
+                    : serverData[field.name]
+                }
               />
             )
           })}
