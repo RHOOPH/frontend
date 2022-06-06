@@ -5,8 +5,10 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
+  const [gettingUser, setGettingUser] = useState(true)
 
   const getUser = () => {
+    setGettingUser(true)
     fetch("/open-suite-master/ws/app/info")
       .then((res) => {
         // server redirects to login page when not logged in with a status code of 302 and then login.jsp resolves with status code 200. However login.jsp does not contain body hence .json() method fails, which throws an error.
@@ -20,6 +22,9 @@ export function AuthProvider({ children }) {
       .catch((err) => {
         setError(err)
         setUser(null)
+      })
+      .finally(() => {
+        setGettingUser(false)
       })
   }
   const login = ({ username, password }) => {
@@ -43,7 +48,9 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, error, getUser }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, error, getUser, gettingUser }}
+    >
       {children}
     </AuthContext.Provider>
   )
