@@ -117,9 +117,6 @@ export default function EditLead() {
   }
 
   useEffect(() => {
-    //when userId changes clear any previous serverData & formData and fetch new one
-    if (Object.keys(formData).length !== 0) setFormData({}) //checking length to make sure it's not already empty to avoid unnecessary re-renders
-    if (Object.keys(serverData).length !== 0) setServerData({})
     setError(false)
     if (!isNaN(userId)) {
       getRecord(LEAD_DB, userId)
@@ -135,6 +132,11 @@ export default function EditLead() {
           if (err === undefined) console.error("No data for ID ", userId)
           else console.error(err)
         })
+
+      return () => {
+        setFormData({})
+        setServerData({})
+      }
     }
     // eslint-disable-next-line
   }, [userId])

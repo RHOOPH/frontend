@@ -1,12 +1,7 @@
 import styled from "styled-components"
 import { Link } from "react-router-dom"
-import { editRoute, protectedRoute } from "../../../routes"
-const Row = styled.tr`
-  /* padding: 1rem; */
-  /* background-color: white; */
-  /* font-size: 13px; */
-  /* text-overflow: ellipsis; */
-`
+import { editRoute } from "../../../routes"
+
 const Data = styled.td`
   padding: 0.5rem;
   font-size: 1rem;
@@ -14,11 +9,11 @@ const Data = styled.td`
 
 const status = ["New", "Assigned", "In process", "Converted", "Lost"]
 
-function Lead({ data, fields, deleteLead }) {
+function Lead({ data, fields, onDelete }) {
   return (
-    <Row>
+    <tr>
       <td>
-        <Link to={protectedRoute + "/" + editRoute + "/" + data.id}>Edit</Link>
+        <Link to={editRoute + "/" + data.id}>Edit</Link>
       </td>
       {fields.map(({ name }, index) => {
         const item = data[name]
@@ -41,13 +36,13 @@ function Lead({ data, fields, deleteLead }) {
       <td>
         <button
           onClick={() => {
-            deleteLead(data.id)
+            onDelete(data.id)
           }}
         >
           ❌
         </button>
       </td>
-    </Row>
+    </tr>
   )
 }
 export default Lead

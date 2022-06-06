@@ -17,52 +17,47 @@ const retrieveData = (rawData) => {
   else throw rawData.data
 }
 
+const request = (url, options) => {
+  return fetch(url, { headers: headers(readCookie("CSRF-TOKEN")), ...options })
+    .then(convertFromJSON)
+    .then(retrieveData)
+}
+
+const GET = (url) => {
+  return request(url, { method: "GET" })
+}
+
+const POST = (url, data) => {
+  return request(url, { method: "POST", body: JSON.stringify(data) })
+}
+
+const DELETE = (url) => {
+  return request(url, {
+    method: "DELETE",
+  })
+}
+
 export const searchDB = (
   database,
-  body = {
+  data = {
     fields: ["id", "name"],
     sortBy: ["id"],
   }
 ) => {
-  return fetch(REST + database + "/search", {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: headers(readCookie("CSRF-TOKEN")),
-  })
-    .then(convertFromJSON)
-    .then(retrieveData)
+  return POST(REST + database + "/search", data)
 }
 
 export const updateDB = (database, data, id = "") => {
-  return fetch(REST + database + "/" + id, {
-    method: "POST",
-    body: JSON.stringify({ data }),
-    headers: headers(readCookie("CSRF-TOKEN")),
-  })
-    .then(convertFromJSON)
-    .then(retrieveData)
-    .then((data) => data[0])
+  return POST(REST + database + "/" + id, { data }).then((data) => data[0])
 }
 
 export const getRecord = (database, id = "1") => {
-  return fetch(REST + database + "/" + id)
-    .then(convertFromJSON)
-    .then(retrieveData)
-    .then((data) => data[0])
+  return GET(REST + database + "/" + id).then((data) => data[0])
 }
 
 export const deleteRecord = (database, id) => {
-  return fetch(REST + database + "/" + id, {
-    method: "DELETE",
-    headers: headers(readCookie("CSRF-TOKEN")),
-  })
-    .then(convertFromJSON)
-    .then(retrieveData)
-    .then((data) => data[0])
+  return DELETE(REST + database + "/" + id).then((data) => data[0])
 }
 export const getMeta = (database) => {
-  return fetch(META + database)
-    .then(convertFromJSON)
-    .then(retrieveData)
-    .then((data) => data.fields)
+  return GET(META + database).then((data) => data.fields)
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useReducer } from "react"
 import styled from "styled-components"
 import Lead from "./Components/Lead"
 import { Link } from "react-router-dom"
@@ -35,12 +35,13 @@ function Leads() {
   const [leads, setLeads] = useState([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [refresh, setRefresh] = useState(0)
+  const [refresh, forceUpdate] = useReducer((count) => count + 1, 0)
 
   const deleteLead = (id) => {
     deleteRecord(LEAD_DB, id)
       .then((data) => {
-        data.id === id && setRefresh((p) => p + 1)
+        data.id === id &&
+          setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== id))
       })
       .catch((err) => console.error(err))
   }
@@ -72,7 +73,7 @@ function Leads() {
         <>
           <div>
             <StyledLink to={editRoute + "/new"}>Add New</StyledLink>
-            <button onClick={() => setRefresh((p) => p + 1)}>🔄</button>
+            <button onClick={() => forceUpdate()}>🔄</button>
           </div>
           <table>
             <thead>
@@ -90,7 +91,7 @@ function Leads() {
                   data={lead}
                   fields={fields}
                   key={lead.id}
-                  deleteLead={deleteLead}
+                  onDelete={deleteLead}
                 />
               ))}
             </tbody>
