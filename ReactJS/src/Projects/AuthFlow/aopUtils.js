@@ -12,15 +12,16 @@ const convertFromJSON = (res) => {
   else throw new Error(`${res.status} ${res.statusText}`)
 }
 
-const retrieveData = (rawData) => {
+export const retrieveData = (rawData) => {
   if (rawData.status === 0 && rawData.data !== undefined) return rawData.data
   else throw rawData.data
 }
 
 const request = (url, options) => {
-  return fetch(url, { headers: headers(readCookie("CSRF-TOKEN")), ...options })
-    .then(convertFromJSON)
-    .then(retrieveData)
+  return fetch(url, {
+    headers: headers(readCookie("CSRF-TOKEN")),
+    ...options,
+  }).then(convertFromJSON)
 }
 
 const GET = (url) => {
@@ -48,16 +49,24 @@ export const searchDB = (
 }
 
 export const updateDB = (database, data, id = "") => {
-  return POST(REST + database + "/" + id, { data }).then((data) => data[0])
+  return POST(REST + database + "/" + id, { data })
+    .then(retrieveData)
+    .then((data) => data[0])
 }
 
 export const getRecord = (database, id = "1") => {
-  return GET(REST + database + "/" + id).then((data) => data[0])
+  return GET(REST + database + "/" + id)
+    .then(retrieveData)
+    .then((data) => data[0])
 }
 
 export const deleteRecord = (database, id) => {
-  return DELETE(REST + database + "/" + id).then((data) => data[0])
+  return DELETE(REST + database + "/" + id)
+    .then(retrieveData)
+    .then((data) => data[0])
 }
 export const getMeta = (database) => {
-  return GET(META + database).then((data) => data.fields)
+  return GET(META + database)
+    .then(retrieveData)
+    .then((data) => data.fields)
 }
