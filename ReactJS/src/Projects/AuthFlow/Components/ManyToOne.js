@@ -74,25 +74,28 @@ export default function ManyToOne({ database, onSelect, name, value }) {
     options,
     totalOptions,
   ])
+
+  const handleInputChange = (_, newValue) => {
+    if (!options.find((option) => option.name === newValue)) {
+      debouncedGetOptions(newValue)
+    }
+    setInputValue(newValue)
+  }
+  const handleChange = (_, newValue) => onSelect({ [name]: newValue })
+
+  const handleOpen = () => getOptions()
   return (
     <Autocomplete
       options={options}
       getOptionLabel={(option) => option.name}
       value={value ?? null}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      onChange={(_, newValue) => onSelect({ [name]: newValue })}
-      onOpen={() => {
-        options.length < 10 && getOptions()
-      }}
-      openOnFocus={false}
+      onChange={handleChange}
+      onOpen={handleOpen}
+      openOnFocus
       inputValue={inputValue}
       sx={{ my: 2 }}
-      onInputChange={(_, newValue) => {
-        if (!options.find((option) => option.name === newValue)) {
-          debouncedGetOptions(newValue)
-        }
-        setInputValue(newValue)
-      }}
+      onInputChange={handleInputChange}
       renderInput={(params) => <TextField {...params} label={name} />}
     />
   )
