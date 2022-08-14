@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState, memo } from "react"
 import { searchDB } from "../aopUtils"
 import Autocomplete from "@mui/material/Autocomplete"
 import TextField from "@mui/material/TextField"
@@ -12,7 +12,7 @@ const filterDuplicate = (arr) => {
   return arr.filter((v, i, self) => i === self.findIndex((t) => v.id === t.id))
 }
 
-export default function ManyToOne({ database, onSelect, name, value }) {
+function ManyToOne({ database, onSelect, name, value }) {
   const [options, setOptions] = useState([])
   const [totalOptions, setTotalOptions] = useState(Infinity)
   const [inputValue, setInputValue] = useState("")
@@ -100,3 +100,5 @@ export default function ManyToOne({ database, onSelect, name, value }) {
     />
   )
 }
+
+export default memo(ManyToOne)

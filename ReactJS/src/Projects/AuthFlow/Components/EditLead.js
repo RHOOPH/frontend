@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import styled from "styled-components"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
@@ -94,9 +94,9 @@ export default function EditLead() {
   const { userId } = useParams()
   const navigate = useNavigate()
 
-  const handleChange = (formDataObj) => {
+  const handleChange = useCallback((formDataObj) => {
     setFormData((p) => ({ ...p, ...formDataObj }))
-  }
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
